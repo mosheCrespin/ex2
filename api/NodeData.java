@@ -8,7 +8,7 @@ public class NodeData implements node_data{
     private String info;
     private int tag;
     private double weight;
-    private geo_location xyz;
+    private geo_location Location;
     HashMap <Integer,node_data>NeiHashmap;
     int MakersId=0;
 
@@ -17,6 +17,13 @@ public class NodeData implements node_data{
         this.id=MakersId;
         MakersId++;
         this.NeiHashmap=new HashMap<Integer,node_data>();
+    }//deep copy constructor
+    public NodeData(node_data other){
+        this.id=other.getKey();
+        this.info=other.getInfo();
+        this.tag=other.getTag();
+        this.weight=other.getWeight();
+        this.Location= other.getLocation();
     }
 
     public int getKey() {
@@ -24,11 +31,11 @@ public class NodeData implements node_data{
     }
 
     public geo_location getLocation() {
-               return this.xyz;
+               return this.Location;
     }
 
     public void setLocation(geo_location p) {
-        this.xyz=p;
+        this.Location=p;
     }
 
     public double getWeight() {
