@@ -3,6 +3,10 @@ package api;
 public class NodeData implements node_data{
     private static int id_maker;
     private int id;
+    private String info;
+    private int tag;
+    private geo_location xyz;
+
     public int getKey() {
        return this.id;
     }
