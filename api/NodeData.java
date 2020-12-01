@@ -1,8 +1,10 @@
 package api;
 
 public class NodeData implements node_data{
+    private static int id_maker;
+    private int id;
     public int getKey() {
-        return 0;
+       return this.id;
     }
 
     public geo_location getLocation() {
