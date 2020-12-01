@@ -1,10 +1,23 @@
 package api;
 
 import java.util.Collection;
+import java.util.HashMap;
 
 public class DWGraph_DS implements directed_weighted_graph {
+    private HashMap<Integer, node_data> My_graph;
+    private int numberOfNodes;
+    private int numberOfEdges;
+    private int amountOfChanges;
+    //constructor
+    public DWGraph_DS() {
+        this.My_graph = new HashMap<>();
+        this.numberOfNodes = 0;
+        this.numberOfEdges = 0;
+        this.amountOfChanges = 0;
+    }
+
     public node_data getNode(int key) {
-        return null;
+        return My_graph.get(key);
     }
 
     public edge_data getEdge(int src, int dest) {
