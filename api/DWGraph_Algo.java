@@ -12,6 +12,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
     }
 
     public directed_weighted_graph copy() {
+
         return null;
     }
 

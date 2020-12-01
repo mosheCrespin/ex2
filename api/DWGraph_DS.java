@@ -8,6 +8,9 @@ public class DWGraph_DS implements directed_weighted_graph {
     private int numberOfNodes;
     private int numberOfEdges;
     private int amountOfChanges;
+
+    private HashMap<Integer,HashMap<Integer,edge_data>>My_graph_edges;
+
     //constructor
     public DWGraph_DS() {
         this.My_graph = new HashMap<>();
@@ -21,6 +24,10 @@ public class DWGraph_DS implements directed_weighted_graph {
     }
 
     public edge_data getEdge(int src, int dest) {
+        //if there is edge between the nodes, return the edge.
+        if(My_graph_edges.get(src).containsKey(dest))
+           return My_graph_edges.get(src).get(dest);
+        else
         return null;
     }
 
