@@ -2,7 +2,7 @@ package api;
 
 import java.util.List;
 
-public class DWGraph_Algo implements dw_graph_algorithms{
+public class DWGraph_Algo implements dw_graph_algorithms {
     public void init(directed_weighted_graph g) {
 
     }
