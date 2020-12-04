@@ -16,6 +16,7 @@ public class EdgeData implements edge_data{
     public EdgeData(int src,int dest,double weight){
         this.src=src;
         this.dest=dest;
+        this.weight=weight;
         this.info="";
     }
     public int getSrc() {

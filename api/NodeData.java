@@ -3,19 +3,18 @@ package api;
 import java.util.HashMap;
 
 public class NodeData implements node_data{
-    private static int id_maker;
+    private static int id_maker=0;
     private int id;
     private String info;
     private int tag;
     private double weight;
     private geo_location Location;
     HashMap <Integer,node_data>NeiHashmap;
-    int MakersId=0;
 
     //constructor
     public NodeData(){
-        this.id=MakersId;
-        MakersId++;
+        this.id=id_maker;
+        id_maker++;
         this.NeiHashmap=new HashMap<Integer,node_data>();
     }//deep copy constructor
     public NodeData(node_data other){
@@ -61,4 +60,8 @@ public class NodeData implements node_data{
     public void setTag(int t) {
         this.tag=t;
     }
+    public String toString(){
+        return " id: " + getKey();
+    }
+
 }

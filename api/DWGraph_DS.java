@@ -6,67 +6,56 @@ import java.util.HashSet;
 import java.util.List;
 
 public class DWGraph_DS implements directed_weighted_graph {
-    private HashMap<Integer, node_data> My_graph;
+    private HashMap<Integer, node_data> myGraph;
     private int numberOfNodes;
     private int numberOfEdges;
     private int amountOfChanges;
-
-    private HashMap<Integer, HashMap<Integer, edge_data>> My_graph_edges;//src-->dest
-    private HashMap<Integer, HashSet<Integer>> pointersToDest;//dest-->src
-
-    //constructor
-    public DW_graph_edges() {
-        this.My_graph_edges = new HashMap<>();
-        this.numberOfNodes = 0;
-        this.numberOfEdges = 0;
-        this.amountOfChanges = 0;
-    }
-
-    //constructor
-    public DW_pointersToDest() {
-        this.pointersToDest = new HashMap<>();
-        this.numberOfNodes = 0;
-        this.numberOfEdges = 0;
-        this.amountOfChanges = 0;
-    }
-
+    private HashMap<Integer, HashMap<Integer, edge_data>> myGraphEdges;//src-->dest
+    private HashMap<Integer, HashSet<Integer>> pointersToSrc;//dest-->src
 
         //constructor
     public DWGraph_DS() {
-        this.My_graph = new HashMap<>();
+        this.myGraph = new HashMap<>();
+        this.myGraphEdges=new HashMap<>();
+        this.pointersToSrc=new HashMap<>();
         this.numberOfNodes = 0;
         this.numberOfEdges = 0;
         this.amountOfChanges = 0;
     }
 
     public node_data getNode(int key) {
-        return My_graph.get(key);
+        return myGraph.get(key);
     }
+
+
+
+    private HashMap<Integer,edge_data> getNi(int src){
+            return myGraphEdges.get(src);
+    }
+
 
     public edge_data getEdge(int src, int dest) {
-        //if there is edge between the nodes, return the edge.
-        if (My_graph_edges.get(src).containsKey(dest))
-            return My_graph_edges.get(src).get(dest);
-        else
-            return null;
+        if (getNi(src) == null) return null;//src does not exist;
+        return getNi(src).get(dest);
     }
-
-    public void addNode(node_data n) {
+        public void addNode(node_data n) {
         //if the node doesn't exist ,make a new node and add him to the graph.
-        if (!My_graph.containsKey(n.getKey())) {
-            My_graph.put(n.getKey(), n);
+        if (!myGraph.containsKey(n.getKey())) {
+            myGraph.put(n.getKey(), n);
+            myGraphEdges.put(n.getKey(),new HashMap<>());
+            pointersToSrc.put(n.getKey(),new HashSet<>());//dest-->src
             amountOfChanges++;
             numberOfNodes++;
         }
     }
 
+
     public void connect(int src, int dest, double w) {
         //check if the nodes are exist and also if the src and dest aren't same node,else do noting.
-        if (src != dest && My_graph.containsKey(src) && My_graph.containsKey(dest)) {
-            if (!My_graph_edges.get(src).containsKey(dest)) {//if there is no already edge between the nodes.
-                new EdgeData(src, dest, w);
-                My_graph_edges.put(src).put(dest).
-
+        if (src != dest && myGraph.containsKey(src) && myGraph.containsKey(dest)) {
+            if (!getNi(src).containsKey(dest)) {//if there is no already edge between the nodes.
+                myGraphEdges.get(src).put(dest,new EdgeData(src,dest,w));//src-->dest
+                pointersToSrc.get(dest).add(src);//dest-->src
                 amountOfChanges++;
                 numberOfEdges++;
 
@@ -75,63 +64,46 @@ public class DWGraph_DS implements directed_weighted_graph {
     }
 
     public Collection<node_data> getV() {
-        return My_graph.values();
+        return myGraph.values();
     }
 
     public Collection<edge_data> getE(int node_id) {
-        //all the edges getting out of the given node.
-        //todo check the return value
-        return My_graph_edges.get(node_id).values();
+        if(getNode(node_id)==null) return null;
+        return getNi(node_id).values();
     }
 
     public node_data removeNode(int key) {
-        if (My_graph.containsKey(key)) {
-            node_data newnode = My_graph.get(key);
-            //init the number of edges after remove node
-            numberOfEdges -= (My_graph_edges.get(key).size());
-
-            //remove all nodes that point to key
-            for (int i : pointersToDest.get(key)) {
-                My_graph_edges.get(i).remove(key);
-            }
-            //remove the edge in pointersToDest hashmap
-            for (int i : My_graph_edges.get(key).keySet()) {
-                pointersToDest.get(i).remove(key);
-            }
-
-            //clear all the nodes that there src is key.todo to it 2 times check
-            My_graph_edges.get(key).clear();
-            My_graph_edges.remove(key);
-
-            //remove all the edges there dest is key
-            pointersToDest.get(key).clear();
-            pointersToDest.remove(key);
-
-            amountOfChanges++;
-
-            //remove from My_graph
-            My_graph.remove(key);
-            return newnode;
-        } else return null;
+        node_data RemovingNode = myGraph.get(key);
+        if (RemovingNode == null) return null;
+        myGraph.remove(key);
+        numberOfEdges-=myGraphEdges.get(key).size();
+        myGraphEdges.remove(key);
+        //remove all nodes that point to key
+        for (int i : pointersToSrc.get(key)) {
+            myGraphEdges.get(i).remove(key);
+            numberOfEdges--;
+        }
+        pointersToSrc.remove(key);
+        amountOfChanges++;
+        numberOfNodes--;
+        return RemovingNode;
     }
+
 
     public edge_data removeEdge(int src, int dest) {
         //if there is a edge between the nodes.
-        if (My_graph_edges.get(src).containsKey(dest)) {
+        if (getNode(src)==null||getNode(dest)==null) return null;
+        if(!getNi(src).containsKey(dest)) return null;
             //save the edge data before delete.
-            edge_data ReturnEdge = My_graph_edges.get(src).get(dest);
+            edge_data ReturnEdge = getNi(src).get(dest);
             //delete the edge from the 2 hashmaps.
-            My_graph_edges.get(src).remove(dest);
-            pointersToDest.get(dest).remove(src);
-
-            //init changes
+            myGraphEdges.get(src).remove(dest);
+            pointersToSrc.get(dest).remove(src);
+            //apply changes
             numberOfEdges--;
             amountOfChanges++;
-
             return ReturnEdge;
-        }
-        //do else
-        return null;
+
     }
 
     public int nodeSize() {
