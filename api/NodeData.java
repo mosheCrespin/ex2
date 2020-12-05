@@ -9,13 +9,11 @@ public class NodeData implements node_data{
     private int tag;
     private double weight;
     private geo_location Location;
-    HashMap <Integer,node_data>NeiHashmap;
 
     //constructor
     public NodeData(){
         this.id=id_maker;
         id_maker++;
-        this.NeiHashmap=new HashMap<Integer,node_data>();
     }//deep copy constructor
     public NodeData(node_data other){
         this.id=other.getKey();

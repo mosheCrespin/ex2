@@ -6,12 +6,12 @@ import java.util.HashSet;
 import java.util.List;
 
 public class DWGraph_DS implements directed_weighted_graph {
-    private HashMap<Integer, node_data> myGraph;
-    private int numberOfNodes;
-    private int numberOfEdges;
-    private int amountOfChanges;
+    private HashMap< Integer ,  node_data> myGraph;
+    private transient int numberOfNodes;
+    private transient int numberOfEdges;
+    private transient int amountOfChanges;
     private HashMap<Integer, HashMap<Integer, edge_data>> My_graph_edges;//src-->dest
-    private HashMap<Integer, HashSet<Integer>> pointersToDest;//dest-->src
+    private transient HashMap<Integer, HashSet<Integer>> pointersToDest;//dest-->src
 
         //constructor
     public DWGraph_DS() {
@@ -42,13 +42,10 @@ public class DWGraph_DS implements directed_weighted_graph {
                 myGraph.put(n.getKey(), n);
                 My_graph_edges.put(n.getKey(), new HashMap<>());
                 pointersToDest.put(n.getKey(), new HashSet<>());
-                if (!myGraph.containsKey(n.getKey())) {//dest-->src
-                    myGraph.put(n.getKey(), n);
-                    amountOfChanges++;
-                    numberOfNodes++;
+                numberOfNodes++;
                 }
             }
-        }
+
 
     public void connect(int src, int dest, double w) {
         //check if the nodes are exist and also if the src and dest aren't same node,else do noting.

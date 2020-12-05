@@ -1,5 +1,11 @@
 package api;
 
+import com.google.gson.*;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.lang.reflect.Type;
 import java.util.*;
 
 
@@ -227,11 +233,37 @@ public double shortestPathDist(int src, int dest) {
 
 
     public boolean save(String file) {
-        return false;
+        Gson gson= new GsonBuilder().setPrettyPrinting().create();
+        String json = gson.toJson(this.myGraph);
+        try{
+            PrintWriter pw = new PrintWriter(new File(file));
+            pw.write(json);
+            pw.close();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     public boolean load(String file) {
+        GsonBuilder builder=new GsonBuilder();
+//        builder.registerTypeAdapter(directed_weighted_graph.class,new )
+//        Type type = new TypeToken<HashMap<Integer, Employee>>(){}.getType();
+//        HashMap<Integer, Employee> clonedMap = gson.fromJson(jsonString, type);
         return false;
+    }
+
+
+    private class graphJsonDeserializer implements JsonDeserializer<directed_weighted_graph>{
+
+        @Override
+        public directed_weighted_graph deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+            return null;
+
+        }
     }
 
 }

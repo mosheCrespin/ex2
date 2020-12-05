@@ -37,6 +37,7 @@ public class WGraphAlgoTest {
         ga.init(g0);
 
 //        List<node_data> list=ga.shortestPathDist(0,4);
+        ga.save("a.txt");
         System.out.println(ga.shortestPathDist(0,8));
         System.out.println(ga.shortestPath(0,8));
 
