@@ -14,25 +14,10 @@ public class DWGraph_DS implements directed_weighted_graph {
     private HashMap<Integer, HashMap<Integer, edge_data>> My_graph_edges;//src-->dest
     private HashMap<Integer, HashSet<Integer>> pointersToDest;//dest-->src
 
-    //constructor
-    public DW_graph_edges() {
-        this.My_graph_edges = new HashMap<>();
-        this.numberOfNodes = 0;
-        this.numberOfEdges = 0;
-        this.amountOfChanges = 0;
-    }
-
-    //constructor
-    public DW_pointersToDest() {
-        this.pointersToDest = new HashMap<>();
-        this.numberOfNodes = 0;
-        this.numberOfEdges = 0;
-        this.amountOfChanges = 0;
-    }
-
-
         //constructor
     public DWGraph_DS() {
+        this.My_graph_edges = new HashMap<>();
+        this.pointersToDest = new HashMap<>();
         this.My_graph = new HashMap<>();
         this.numberOfNodes = 0;
         this.numberOfEdges = 0;
@@ -55,6 +40,8 @@ public class DWGraph_DS implements directed_weighted_graph {
         //if the node doesn't exist ,make a new node and add him to the graph.
         if (!My_graph.containsKey(n.getKey())) {
             My_graph.put(n.getKey(), n);
+            My_graph_edges.put(n.getKey(),new HashMap<>());
+            pointersToDest.put(n.getKey(),new HashSet<>());
             amountOfChanges++;
             numberOfNodes++;
         }
@@ -64,9 +51,8 @@ public class DWGraph_DS implements directed_weighted_graph {
         //check if the nodes are exist and also if the src and dest aren't same node,else do noting.
         if (src != dest && My_graph.containsKey(src) && My_graph.containsKey(dest)) {
             if (!My_graph_edges.get(src).containsKey(dest)) {//if there is no already edge between the nodes.
-                new EdgeData(src, dest, w);
-                My_graph_edges.put(src).put(dest).
-
+                My_graph_edges.get(src).put(dest,new EdgeData(src, dest, w));
+                pointersToDest.get(dest).add(src);
                 amountOfChanges++;
                 numberOfEdges++;
 
