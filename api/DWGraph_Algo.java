@@ -2,13 +2,17 @@ package api;
 
 import java.util.*;
 
+
 public class DWGraph_Algo implements dw_graph_algorithms{
+
     private directed_weighted_graph myGraph;
-    public DWGraph_Algo(){
-        this.myGraph=new DWGraph_DS();
+
+    public DWGraph_Algo() {
+        this.myGraph = new DWGraph_DS();
     }
+
     public void init(directed_weighted_graph g) {
-        this.myGraph=g;
+        this.myGraph = g;
     }
 
     public directed_weighted_graph getGraph() {
@@ -16,31 +20,33 @@ public class DWGraph_Algo implements dw_graph_algorithms{
     }
 
     public directed_weighted_graph copy() {
-        directed_weighted_graph copiedGraph=new DWGraph_DS();
+        directed_weighted_graph copiedGraph = new DWGraph_DS();
         node_data temp;
-        for(node_data curr: myGraph.getV()){
+        for (node_data curr : myGraph.getV()) {
             copiedGraph.addNode(new NodeData(curr));
         }
-        for(node_data curr:myGraph.getV())
-            for(edge_data currNi : myGraph.getE(curr.getKey())){
+        for (node_data curr : myGraph.getV())
+            for (edge_data currNi : myGraph.getE(curr.getKey())) {
                 copiedGraph.connect(currNi.getSrc(), currNi.getDest(), curr.getWeight());
             }
         return copiedGraph;
     }
-    private directed_weighted_graph deepCopyOppositGraph(){
-        directed_weighted_graph copiedGraph=new DWGraph_DS();
+
+    private directed_weighted_graph deepCopyOppositGraph() {
+        directed_weighted_graph copiedGraph = new DWGraph_DS();
         node_data temp;
-        for(node_data curr: myGraph.getV()){
+        for (node_data curr : myGraph.getV()) {
             copiedGraph.addNode(new NodeData(curr));
         }
-        for(node_data curr:myGraph.getV())
-            for(edge_data currNi : myGraph.getE(curr.getKey())){
+        for (node_data curr : myGraph.getV())
+            for (edge_data currNi : myGraph.getE(curr.getKey())) {
                 copiedGraph.connect(currNi.getDest(), currNi.getSrc(), curr.getWeight());
             }
         return copiedGraph;
     }
-    private void initTags(){
-        for(node_data curr: myGraph.getV()){
+
+    private void initTags(directed_weighted_graph g) {
+        for (node_data curr : g.getV()) {
             curr.setTag(-1);
         }
     }
@@ -53,30 +59,31 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 
 
     public boolean isConnected() {
-        directed_weighted_graph graphPointer=myGraph;
+        directed_weighted_graph graphPointer = myGraph;
         int Node_size = graphPointer.nodeSize();
         if (Node_size < 2)//if the number of nodes is less than 2 the graph is connected
             return true;
         //if the graph is connected it should have at least 2(n-1) edges
-        if(graphPointer.edgeSize()<2*Node_size-2)
+        if (graphPointer.edgeSize() < 2 * Node_size - 2)
             return false;
-        if(graphPointer.edgeSize()== (graphPointer.nodeSize()*(graphPointer.nodeSize()-1)))
+        if (graphPointer.edgeSize() == (graphPointer.nodeSize() * (graphPointer.nodeSize() - 1)))
             return true;
-        int[] counters=new int[2];//counter for two situation;
+        int[] counters = new int[2];//counter for two situation;
         //we should start from some place
         node_data start = graphPointer.getV().iterator().next();//should start from somewhere
-        for(int i=0;i<2;i++) {
-            initTags();//initializes all the tags to -1
+        for (int i = 0; i < 2; i++) {
+            initTags(graphPointer);//initializes all the tags to -1
             node_data curr;
             node_data Ni;
             Queue<node_data> q = new LinkedList<>();
             q.add(start);
-            start.setTag(1);
+            graphPointer.getNode(start.getKey()).setTag(1);
             counters[i] = 1;
             while (!q.isEmpty()) {
                 curr = q.poll();
                 for (edge_data Eni : graphPointer.getE(curr.getKey())) {
-                    Ni = graphPointer.getNode(Eni.getDest());//todo
+
+                    Ni = graphPointer.getNode(Eni.getDest());
                     if (Ni.getTag() == -1) {
                         q.add(Ni);
                         Ni.setTag(1);
@@ -84,8 +91,8 @@ public class DWGraph_Algo implements dw_graph_algorithms{
                     }
                 }
             }
-            if(counters[i]!= graphPointer.nodeSize()) return false;
-            graphPointer=deepCopyOppositGraph();
+            if (counters[i] != graphPointer.nodeSize()) return false;
+            graphPointer = deepCopyOppositGraph();
 
         }
         //if the number of the seen vertices is equal to nodeSize than the graph is connected
@@ -133,42 +140,91 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 
             }
         }*/
-
-
-        public double shortestPathDist(int src, int dest) {
-            //HashMap <Integer,node_data>nodes=new HashMap<>();
-
-            //this comparator using the field tag of every node to compare
-            Comparator<node_data> nodeInfoComparator= Comparator.comparingDouble(node_data::getWeight);
-            Queue<node_data> q=new PriorityQueue<>(nodeInfoComparator);
-            initTags();//init all the tags to -1
-            initWeight();//init all the weight to -1
-            node_data start=myGraph.getNode(src);
-            node_data end=myGraph.getNode(dest);
-            if(start==null||end==null) return -1;//if one or two of the nodes does not exist in the graph
-            if(src==dest) {//if true then returns a 0
-                return 0;
-            }
-            node_data curr;
-            start.setWeight(0);
-            q.add(start);
-            while(!q.isEmpty()&&end.getTag()==-1){
-                curr=q.poll();//take a node
-                for(edge_data Ni: myGraph.getE(curr.getKey())) {//run for all of his Ni. O(logE)
-                    if (myGraph.getNode(Ni.getDest()).getWeight()==-1||curr.getWeight()+Ni.getWeight()<myGraph.getNode(Ni.getDest()).getWeight())//if the node never got visited
-                    {
-                        myGraph.getNode(Ni.getDest()).setWeight(curr.getWeight()+Ni.getWeight());//the tag of this node is his father tag(recursive)+the weight of the edge who connects between the father to him.
-                        //myGraph.getNode(Ni.getDest()).setTag(0);
-                        q.add(myGraph.getNode(Ni.getDest()));
-                        }
-                    }
-                }
-            return end.getWeight();
-            }
-
-    public List<node_data> shortestPath(int src, int dest) {
-        return null;
+public double shortestPathDist(int src, int dest) {
+    //this comparator using the field tag of every node to compare
+    Comparator<node_data> nodeInfoComparator= Comparator.comparingDouble(node_data::getWeight);
+    Queue<node_data> q=new PriorityQueue<>(nodeInfoComparator);
+    initTags(myGraph);//init all the tags to -1
+    initWeight();//init all the weight to -1
+    node_data start=myGraph.getNode(src);
+    node_data end=myGraph.getNode(dest);
+    if(start==null||end==null) return -1;//if one or two of the nodes does not exist in the graph
+    if(src==dest) {//if true then returns a 0
+        return 0;
     }
+    node_data curr;
+    start.setWeight(0);
+    start.setTag(0);
+    q.add(start);
+    while(!q.isEmpty()&&end.getTag()==-1){
+        curr=q.poll();//take a node
+        for(edge_data Ni: myGraph.getE(curr.getKey())) {//run for all of his Ni. O(logE)
+            if (myGraph.getNode(Ni.getDest()).getWeight()==-1||curr.getWeight()+Ni.getWeight()<myGraph.getNode(Ni.getDest()).getWeight())//if the node never got visited
+            {
+                curr.setTag(0);
+                myGraph.getNode(Ni.getDest()).setWeight(curr.getWeight()+Ni.getWeight());//the tag of this node is his father tag(recursive)+the weight of the edge who connects between the father to him.
+                q.add(myGraph.getNode(Ni.getDest()));
+            }
+        }
+    }
+    return end.getWeight();
+}
+    public List<node_data> shortestPath(int src, int dest) {
+        HashMap<node_data, node_data> father = new HashMap<>();//this hashmap is using to recover the path
+        //this comparator using the field tag of every node to compare
+        List<node_data> temp = new LinkedList<>();
+        Comparator<node_data> nodeInfoComparator= Comparator.comparingDouble(node_data::getWeight);
+        Queue<node_data> q=new PriorityQueue<>(nodeInfoComparator);
+        initTags(myGraph);//init all the tags to -1
+        initWeight();//init all the weight to -1
+        node_data start=myGraph.getNode(src);
+        node_data end=myGraph.getNode(dest);
+        temp.add(start);
+        if(start==null||end==null) return null;//if one or two of the nodes does not exist in the graph
+        if(src==dest) {//if true then returns a 0
+            return temp;
+        }
+        node_data curr;
+        start.setWeight(0);
+        start.setTag(0);
+        q.add(start);
+        while(!q.isEmpty()&&end.getTag()==-1){
+            curr=q.poll();//take a node
+            for(edge_data Ni: myGraph.getE(curr.getKey())) {//run for all of his Ni. O(logE)
+                if (myGraph.getNode(Ni.getDest()).getWeight()==-1||curr.getWeight()+Ni.getWeight()<myGraph.getNode(Ni.getDest()).getWeight())//if the node never got visited
+                {
+                    father.put(myGraph.getNode(Ni.getDest()),curr);
+                    curr.setTag(0);
+                    myGraph.getNode(Ni.getDest()).setWeight(curr.getWeight()+Ni.getWeight());//the tag of this node is his father tag(recursive)+the weight of the edge who connects between the father to him.
+                    q.add(myGraph.getNode(Ni.getDest()));
+                }
+            }
+        }
+        if (!father.containsKey(end)) {//if there is no path then return null
+            return null;
+        }
+        return buildPath(father, end);//builds path using `buildPath` and return this list
+}
+
+    /**
+     * this method makes a conversion from HashMap that holds a path, to a List of nodes
+     * running time is O(k) while k is the number of the nodes in the path
+     *
+     * @param father the HashMap who holds the path
+     * @param dest   the key of the dest node
+     * @return a list of the path
+     */
+    private LinkedList<node_data> buildPath(HashMap<node_data, node_data> father, node_data dest) {
+        LinkedList<node_data> ans = new LinkedList<>();
+        ans.add(dest);
+        dest = father.get(dest);//O(1)
+        while (dest != null) {//O(K)
+            ans.addFirst(dest);
+            dest = father.get(dest);
+        }
+        return ans;
+    }
+
 
     public boolean save(String file) {
         return false;
@@ -176,23 +232,6 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 
     public boolean load(String file) {
         return false;
-    }
-
-    public static class weights(){
-
-            private node_data a;
-            private double weight;
-
-        public weights(node_data a) {
-            this.a = a;
-            this.weight=0;
-        }
-        public void setWeight(double weight){
-            this.weight=weight;
-        }
-        public double getWeight(){
-            return this.weight;
-        }
     }
 
 }
