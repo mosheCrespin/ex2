@@ -111,11 +111,12 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         distances.put(start, 0.0);//the distance between node to itself is 0
         q.add(start);
         boolean flag = false;
-        while (!q.isEmpty()) {
+        while (!q.isEmpty()&&!flag) {
             curr = q.poll();//take a node
+            if(curr.getKey()==dest)
+                flag=true;
             for (edge_data edge : myGraph.getE(curr.getKey())) {//run for all of his Ni
                 Ni_node = myGraph.getNode(edge.getDest());
-                if (Ni_node.getKey() == dest) flag = true;//if flag==true then there is a path
                 if (Ni_node.getTag() == -1) {//if the Ni never got visited
                     distances.put(Ni_node, (distances.get(curr) + edge.getWeight()));//the tag of this node is his father tag(recursive)+the weight of the edge who connects between the father to him.
                     father.put(Ni_node, curr);//the HashMap builds in this path--> <the neighbor, his father>
@@ -127,17 +128,18 @@ public class DWGraph_Algo implements dw_graph_algorithms {
                     if (temp != distances.get(Ni_node)) {//if the new path is better
                         father.put(Ni_node, curr);//set the new father of Ni
                         distances.put(Ni_node, temp);//set the new path of Ni
+                        q.add(Ni_node);//for update the list, yes i know there will be duplicate nodes inside the q
                     }
                 }
             }
 
         }
-        if (!flag)//if there is no path then return null
-            return null;
-
+        if (!flag) {//if there is no path then return null
+            List<node_data> temp = new LinkedList<>();
+            return temp;
+        }
         return buildPath(father, end);//builds path using `buildPath` and return this list
     }
-
     /**
      * this method makes a conversion from HashMap that holds a path, to a List of nodes
      * running time is O(k) while k is the number of the nodes in the path
@@ -158,7 +160,6 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     }
 
 
-
     public boolean save(String file) {
         return false;
     }
@@ -166,4 +167,5 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     public boolean load(String file) {
         return false;
     }
+
 }

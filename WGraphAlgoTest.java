@@ -26,15 +26,16 @@ public class WGraphAlgoTest {
         g0.connect(2,5,0.3);
         g0.connect(5,4,0.3);
         g0.connect(4,7,0.3);
-        g0.connect(0,3,3);
-        g0.connect(3,7,0.2);
+        g0.connect(0,3,0);
+        g0.connect(3,7,0);
         g0.connect(3,6,1);
         g0.connect(0,1,0.5);
         g0.connect(5,3,0.1);
+        g0.connect(8,7,1);
         dw_graph_algorithms ga=new DWGraph_Algo();
         ga.init(g0);
 
-        List<node_data> list=ga.shortestPath(0,7);
+        List<node_data> list=ga.shortestPath(0,4);
         System.out.println(list.toString());
 
 
