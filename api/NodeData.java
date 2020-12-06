@@ -31,6 +31,7 @@ public class NodeData implements node_data{
         this.weight=weight;
         this.Location= Location;
     }
+    public NodeData(int key,geoLocation location){this.id=key; this.Location=location;}
 
     public int getKey() {
        return this.id;
