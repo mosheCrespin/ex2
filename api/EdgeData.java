@@ -48,7 +48,7 @@ public class EdgeData implements edge_data{
     }
     public String toString(){
         StringBuilder str= new StringBuilder();
-        str.append("dest: ").append(this.dest).append(", weight: ").append(this.weight);
+        str.append("|dest: ").append(this.dest).append(", weight: ").append(this.weight).append(", info: ").append(this.info).append(", tag:").append(this.tag).append(" |\n");
         return str +"";
     }
 }

@@ -237,6 +237,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
             Gson gson = builder.create();
             FileReader reader = new FileReader(file);
             directed_weighted_graph graph=gson.fromJson(reader,directed_weighted_graph.class);
+            System.out.println(graph);
             if(graph.equals(this.myGraph))
                 this.myGraph=graph;
 
@@ -257,7 +258,6 @@ public class DWGraph_Algo implements dw_graph_algorithms{
             JsonObject jsonObject = jsonElement.getAsJsonObject();
             JsonObject nodes=jsonObject.get("myGraph").getAsJsonObject();
             node_data currNode;
-            Gson gson= new GsonBuilder().setPrettyPrinting().create();
             directed_weighted_graph g0=new DWGraph_DS();
             for(Map.Entry<String, JsonElement> node :nodes.entrySet()){
                 JsonObject curr= node.getValue().getAsJsonObject();
@@ -269,10 +269,13 @@ public class DWGraph_Algo implements dw_graph_algorithms{
             JsonObject edges=jsonObject.get("My_graph_edges").getAsJsonObject();
             for(Map.Entry<String, JsonElement> edge : edges.entrySet()){
                 for(Map.Entry<String, JsonElement> currEdge:edge.getValue().getAsJsonObject().entrySet()){
-                    int src=currEdge.getValue().getAsJsonObject().get("src").getAsInt();
-                    int dest=currEdge.getValue().getAsJsonObject().get("dest").getAsInt();
-                    double weight=currEdge.getValue().getAsJsonObject().get("weight").getAsDouble();
+                    JsonObject edgeData=currEdge.getValue().getAsJsonObject();
+                    int src=edgeData.get("src").getAsInt();
+                    int dest=edgeData.get("dest").getAsInt();
+                    double weight=edgeData.get("weight").getAsDouble();
                     g0.connect(src,dest,weight);
+                    g0.getEdge(src,dest).setInfo(edgeData.get("info").getAsString());
+                    g0.getEdge(src,dest).setTag(edgeData.get("tag").getAsInt());
                 }
             }
             return g0;

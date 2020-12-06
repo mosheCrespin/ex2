@@ -135,10 +135,10 @@ public class DWGraph_DS implements directed_weighted_graph {
         public String toString(){
             StringBuilder str = new StringBuilder();
             for (node_data curr : myGraph.values()) {
-                str.append(curr.getKey()).append("->");
+                str.append(curr.getKey()).append("->\n");
                 for (edge_data currNi : getNi(curr.getKey()).values())
-                    str.append(" ").append(currNi.toString()).append(", ");
-                str.append("| \n");
+                    str.append(" ").append(currNi.toString());
+                str.append("____________________________________________ \n");
             }
             return str + "\n" + "nodes " + numberOfNodes + ", edges: " + numberOfEdges + ", changes: " + getMC();
         }
