@@ -46,4 +46,9 @@ public class EdgeData implements edge_data{
     public void setTag(int t) {
         this.tag=t;
     }
+    public String toString(){
+        StringBuilder str= new StringBuilder();
+        str.append("dest: ").append(this.dest).append(", weight: ").append(this.weight);
+        return str +"";
+    }
 }

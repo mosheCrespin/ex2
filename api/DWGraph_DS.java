@@ -1,9 +1,6 @@
 package api;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class DWGraph_DS implements directed_weighted_graph {
     private HashMap< Integer ,  node_data> myGraph;
@@ -111,7 +108,41 @@ public class DWGraph_DS implements directed_weighted_graph {
         return numberOfEdges;
     }
 
+
     public int getMC() {
         return amountOfChanges;
     }
-}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DWGraph_DS that = (DWGraph_DS) o;
+        boolean flag = false;
+        if (numberOfNodes == that.numberOfNodes &&
+                numberOfEdges == that.numberOfEdges) {
+            flag = true;
+            for (int src : myGraph.keySet())
+                for (int dest : My_graph_edges.get(src).keySet())
+                    if (((DWGraph_DS) o).getEdge(src, dest).getSrc() != src && ((DWGraph_DS) o).getEdge(src, dest).getDest() != dest)
+                        flag = false;
+        }
+
+            return flag;
+
+    }
+
+        public String toString(){
+            StringBuilder str = new StringBuilder();
+            for (node_data curr : myGraph.values()) {
+                str.append(curr.getKey()).append("->");
+                for (edge_data currNi : getNi(curr.getKey()).values())
+                    str.append(" ").append(currNi.toString()).append(", ");
+                str.append("| \n");
+            }
+            return str + "\n" + "nodes " + numberOfNodes + ", edges: " + numberOfEdges + ", changes: " + getMC();
+        }
+
+    }
+
+

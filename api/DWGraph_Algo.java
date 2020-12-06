@@ -4,6 +4,7 @@ import com.google.gson.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -230,11 +231,22 @@ public class DWGraph_Algo implements dw_graph_algorithms{
     }
 
     public boolean load(String file) {
-        GsonBuilder builder=new GsonBuilder();
-//        builder.registerTypeAdapter(directed_weighted_graph.class,new )
-//        Type type = new TypeToken<HashMap<Integer, Employee>>(){}.getType();
-//        HashMap<Integer, Employee> clonedMap = gson.fromJson(jsonString, type);
-        return false;
+        try {
+            GsonBuilder builder = new GsonBuilder();
+            builder.registerTypeAdapter(directed_weighted_graph.class, new graphJsonDeserializer());
+            Gson gson = builder.create();
+            FileReader reader = new FileReader(file);
+            directed_weighted_graph graph=gson.fromJson(reader,directed_weighted_graph.class);
+            if(graph.equals(this.myGraph))
+                this.myGraph=graph;
+
+            else return false;
+        }catch (FileNotFoundException e){
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 
 
@@ -243,8 +255,27 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         @Override
         public directed_weighted_graph deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
             JsonObject jsonObject = jsonElement.getAsJsonObject();
-            return null;
-
+            JsonObject nodes=jsonObject.get("myGraph").getAsJsonObject();
+            node_data currNode;
+            Gson gson= new GsonBuilder().setPrettyPrinting().create();
+            directed_weighted_graph g0=new DWGraph_DS();
+            for(Map.Entry<String, JsonElement> node :nodes.entrySet()){
+                JsonObject curr= node.getValue().getAsJsonObject();
+                JsonObject currLocation=curr.get("Location").getAsJsonObject();
+                geoLocation geoLocation=new geoLocation(currLocation.get("x").getAsDouble(),currLocation.get("y").getAsDouble(),currLocation.get("z").getAsDouble());
+                currNode=new NodeData(curr.get("id").getAsInt(),curr.get("tag").getAsInt(),curr.get("weight").getAsDouble(),curr.get("info").getAsString(),geoLocation);
+                g0.addNode(currNode);
+            }
+            JsonObject edges=jsonObject.get("My_graph_edges").getAsJsonObject();
+            for(Map.Entry<String, JsonElement> edge : edges.entrySet()){
+                for(Map.Entry<String, JsonElement> currEdge:edge.getValue().getAsJsonObject().entrySet()){
+                    int src=currEdge.getValue().getAsJsonObject().get("src").getAsInt();
+                    int dest=currEdge.getValue().getAsJsonObject().get("dest").getAsInt();
+                    double weight=currEdge.getValue().getAsJsonObject().get("weight").getAsDouble();
+                    g0.connect(src,dest,weight);
+                }
+            }
+            return g0;
         }
     }
 

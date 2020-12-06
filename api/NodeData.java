@@ -13,6 +13,8 @@ public class NodeData implements node_data{
     //constructor
     public NodeData(){
         this.id=id_maker;
+        this.info="";
+        this.Location=new geoLocation(0,0,0);
         id_maker++;
     }//deep copy constructor
     public NodeData(node_data other){
@@ -21,6 +23,13 @@ public class NodeData implements node_data{
         this.tag=other.getTag();
         this.weight=other.getWeight();
         this.Location= other.getLocation();
+    }
+    public NodeData(int key,int tag,double weight,String info,geoLocation Location){
+        this.id=key;
+        this.info=info;
+        this.tag=tag;
+        this.weight=weight;
+        this.Location= Location;
     }
 
     public int getKey() {
