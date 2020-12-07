@@ -2,14 +2,14 @@ package gameClient;
 
 import api.*;
 import com.google.gson.*;
+import gameClient.util.Point3D;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.PrintWriter;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class loadForGames {
     static directed_weighted_graph LoadGraphFromJson(String str) {
@@ -19,11 +19,42 @@ public class loadForGames {
         directed_weighted_graph graph = gson.fromJson(str, directed_weighted_graph.class);
         return graph;
     }
-    static List<CL_Pokemon> LoadPocimonsFromJson(String str){
-        return null;
+    public static ArrayList<CL_Pokemon> LoadPokemonsFromJson(String fs) {
+        ArrayList<CL_Pokemon> ans = new  ArrayList<CL_Pokemon>();
+        try {
+            JSONObject ttt = new JSONObject(fs);
+            JSONArray ags = ttt.getJSONArray("Pokemons");
+            for(int i=0;i<ags.length();i++) {
+                JSONObject pp = ags.getJSONObject(i);
+                JSONObject pk = pp.getJSONObject("Pokemon");
+                int t = pk.getInt("type");
+                double v = pk.getDouble("value");
+                //double s = 0;//pk.getDouble("speed");
+                String p = pk.getString("pos");
+                CL_Pokemon f = new CL_Pokemon(new Point3D(p), t, v, 0, null);
+                ans.add(f);
+            }
+        }
+        catch (JSONException e) {e.printStackTrace();}
+        return ans;
     }
-    static List<CL_Agent> LoadAgentstsFromJson (String str){return null;}
-
+    public static List<CL_Agent> LoadAgentsFromJson(String aa, directed_weighted_graph gg) {
+        ArrayList<CL_Agent> ans = new ArrayList<CL_Agent>();
+        try {
+            JSONObject ttt = new JSONObject(aa);
+            JSONArray ags = ttt.getJSONArray("Agents");
+            for(int i=0;i<ags.length();i++) {
+                CL_Agent c = new CL_Agent(gg,0);
+                c.update(ags.get(i).toString());
+                ans.add(c);
+            }
+            //= getJSONArray("Agents");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return ans;
+    }
+    
 
 
 
@@ -42,7 +73,7 @@ public class loadForGames {
     /////////////////////////////////////////////////////////////////////////////////////
 
 
-    private static class graphJsonDeserializer implements JsonDeserializer<directed_weighted_graph>, gameClient.stringJsonDeserializer {
+    private static class graphJsonDeserializer implements JsonDeserializer<directed_weighted_graph> {
 
         @Override
         public  directed_weighted_graph deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
@@ -61,7 +92,6 @@ public class loadForGames {
                 double w=curr.getAsJsonObject().get("w").getAsDouble();
                 g0.connect(src,dest,w);
             }
-            System.out.println(g0);
             return g0;
         }
     }
@@ -70,4 +100,6 @@ public class loadForGames {
         geoLocation ans =new geoLocation(Double.parseDouble(a[0]),Double.parseDouble(a[1]),Double.parseDouble(a[2]));
         return ans;
     }
+
+
 }
