@@ -38,7 +38,7 @@ public class loadForGames {
         catch (JSONException e) {e.printStackTrace();}
         return ans;
     }
-    public static List<CL_Agent> LoadAgentsFromJson(String aa, directed_weighted_graph gg) {
+    public static ArrayList<CL_Agent> LoadAgentsFromJson(String aa, directed_weighted_graph gg) {
         ArrayList<CL_Agent> ans = new ArrayList<CL_Agent>();
         try {
             JSONObject ttt = new JSONObject(aa);
@@ -54,7 +54,8 @@ public class loadForGames {
         }
         return ans;
     }
-    
+
+
 
 
 

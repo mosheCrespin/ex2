@@ -10,6 +10,8 @@ public class CL_Pokemon {
 	private Point3D _pos;
 	private double min_dist;
 	private int min_ro;
+	private boolean isBusy;
+
 	
 	public CL_Pokemon(Point3D p, int t, double v, double s, edge_data e) {
 		_type = t;
@@ -19,7 +21,10 @@ public class CL_Pokemon {
 		_pos = p;
 		min_dist = -1;
 		min_ro = -1;
+		isBusy=false;
 	}
+	public boolean isBusy(){return isBusy;}
+	public void setIsBusy(boolean flag){this.isBusy=flag;}
 	public static CL_Pokemon init_from_json(String json) {
 		CL_Pokemon ans = null;
 		try {

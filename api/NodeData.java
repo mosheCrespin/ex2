@@ -11,18 +11,22 @@ public class NodeData implements node_data{
     private geo_location Location;
 
     //constructor
-    public NodeData(){
-        this.id=id_maker;
-        this.info="";
-        this.Location=new geoLocation(0,0,0);
-        id_maker++;
-    }//deep copy constructor
+//    public NodeData(){
+//        this.id=id_maker;
+//        this.info="";
+//        this.Location=new geoLocation(0,0,0);
+//        id_maker++;
+//    }//deep copy constructor
     public NodeData(node_data other){
         this.id=other.getKey();
         this.info=other.getInfo();
         this.tag=other.getTag();
         this.weight=other.getWeight();
         this.Location= other.getLocation();
+    }
+    public NodeData(){
+        this.id=id_maker;
+        id_maker++;
     }
     public NodeData(int key,int tag,double weight,String info,geoLocation Location){
         this.id=key;

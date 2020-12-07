@@ -35,16 +35,40 @@ public class WGraphAlgoTest {
         g0.connect(7,8,1);
         dw_graph_algorithms ga=new DWGraph_Algo();
         ga.init(g0);
-
 //        List<node_data> list=ga.shortestPathDist(0,4);
-        ga.save("file.json");
-        Assertions.assertTrue(ga.load("file.json"));
-
+//        ga.save("file.json");
+//        Assertions.assertTrue(ga.load("file.json"));
         System.out.println(ga.shortestPathDist(0,4));
         System.out.println(ga.shortestPath(0,4));
 
+    }
+    @Test
+    void million_nodes_ten_million_edge_runtime_test() {
+        directed_weighted_graph graph_test = new DWGraph_DS();
+        int mil = 1000000;
+        double run_time_s;
+        long endTime,finalTime,startTime = System.currentTimeMillis();
+        boolean check=false;
+        node_data curr;
+        for (int i = 0; i <mil;i++)
+        {
+            graph_test.addNode(new NodeData());
 
+        }
+        for (int i = 0, j=mil-1; i <mil;i++)
+        {
+            for (int k=0;k<10;k++ ) {
 
-
+                graph_test.connect(i, j-k, 2);
+            }
+        }
+        endTime = System.currentTimeMillis();
+        finalTime = endTime - startTime;
+        run_time_s =((double)finalTime)/1000;
+        if (run_time_s<10.0)
+            check=true;
+        System.out.println("node size: " + graph_test.nodeSize() +" edge size: "
+                + graph_test.edgeSize() + " runtime seconds: " + run_time_s);
+        Assertions.assertTrue(check);
     }
 }

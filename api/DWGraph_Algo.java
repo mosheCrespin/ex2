@@ -165,6 +165,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         node_data Ni_node;
         node_data curr;
         distances.put(start, 0.0);//the distance between node to itself is 0
+        start.setTag(1);
         q.add(start);
         boolean flag = false;
         while (!q.isEmpty()&&!flag) {
@@ -206,9 +207,10 @@ public class DWGraph_Algo implements dw_graph_algorithms{
      */
     private LinkedList<node_data> buildPath(HashMap<node_data, node_data> father, node_data dest) {
         LinkedList<node_data> ans = new LinkedList<>();
+        int end=dest.getKey();
         ans.add(dest);
         dest = father.get(dest);//O(1)
-        while (dest != null) {//O(K)
+        while (dest != null&&dest.getKey()!=end) {//O(K)
             ans.addFirst(dest);
             dest = father.get(dest);
         }
