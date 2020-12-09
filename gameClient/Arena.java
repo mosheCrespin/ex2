@@ -1,9 +1,7 @@
 package gameClient;
 
-import api.directed_weighted_graph;
-import api.edge_data;
-import api.geo_location;
-import api.node_data;
+import api.*;
+import com.google.gson.*;
 import gameClient.util.Point3D;
 import gameClient.util.Range;
 import gameClient.util.Range2D;
@@ -12,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -29,6 +28,7 @@ public class Arena {
 	private List<String> _info;
 	private static Point3D MIN = new Point3D(0, 100,0);
 	private static Point3D MAX = new Point3D(0, 100,0);
+	private int numberOfAgents;
 
 	public Arena() {;
 		_info = new ArrayList<String>();
@@ -45,6 +45,18 @@ public class Arena {
 			updateEdge(curr,this._gg);
 		}
 	}
+	public void setNumberOfAgents(String json){
+			try {
+				JSONObject ttt = new JSONObject(json);
+				JSONObject object = ttt.getJSONObject("GameServer");
+				this.numberOfAgents= object.getInt("agents");
+
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+	
+	public int getNumberOfAgents(){return this.numberOfAgents;}
 	public void setAgents(List<CL_Agent> f) {
 		this._agents = f;
 	}
@@ -185,4 +197,42 @@ public class Arena {
 		return ans;
 	}
 
+
+/////////////////////////////////////////////////////////////////////////////////
+	static directed_weighted_graph LoadGraphFromJson(String str) {
+		GsonBuilder builder = new GsonBuilder();
+		builder.registerTypeAdapter(directed_weighted_graph.class, new graphJsonDeserializer());
+		Gson gson = builder.create();
+		return gson.fromJson(str, directed_weighted_graph.class);
+	}
+	/////////////////////////////////////////////////////////////////////////////////////
+
+	private static class graphJsonDeserializer implements JsonDeserializer<directed_weighted_graph> {
+		@Override
+		public  directed_weighted_graph deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+			JsonObject jsonObject = jsonElement.getAsJsonObject();
+			JsonArray nodes=jsonObject.get("Nodes").getAsJsonArray();
+			node_data currNode;
+			directed_weighted_graph g0=new DWGraph_DS();
+			for(JsonElement curr: nodes){
+				currNode=new NodeData(curr.getAsJsonObject().get("id").getAsInt(),posToDouble(curr.getAsJsonObject().get("pos").getAsString()));
+				g0.addNode(currNode);
+			}
+			JsonArray edges=jsonObject.get("Edges").getAsJsonArray();
+			for(JsonElement curr :edges){
+				int src=curr.getAsJsonObject().get("src").getAsInt();
+				int dest=curr.getAsJsonObject().get("dest").getAsInt();
+				double w=curr.getAsJsonObject().get("w").getAsDouble();
+				g0.connect(src,dest,w);
+			}
+			return g0;
+		}
+	}
+	private static geoLocation posToDouble(String str){
+		String[] a = str.split(",");
+		geoLocation ans =new geoLocation(Double.parseDouble(a[0]),Double.parseDouble(a[1]),Double.parseDouble(a[2]));
+		return ans;
+	}
 }
+
+
