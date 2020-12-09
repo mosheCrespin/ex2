@@ -15,7 +15,8 @@ public class pokimonForAgents {
     private DWGraph_Algo graphAlgo;
     private List<node_data> currPath;
     private Iterator<node_data> currPathIterator;
-    private CL_Pokemon currPokimon;
+//    private CL_Pokemon currPokimon;
+//    private int currIndex;
 
 
 
@@ -26,12 +27,12 @@ public class pokimonForAgents {
         this.graphAlgo.init(this.graph);
         this.list=new ArrayList<>();
         this.comp= Comparator.comparingDouble(pokemonPath::getDistance);
-        for(CL_Pokemon pokemon: pokimons){
-            list.add(new pokemonPath(pokemon,this.graphAlgo));
+        updatePokimons(pokimons);
         }
-    }
-    public void updatecurrLocation(int curr){
-        if(this.currLocationOfAgent==curr) return;
+
+
+    private void updatecurrLocation(int curr){
+//        if(this.currLocationOfAgent==curr) return;
         this.currLocationOfAgent=curr;
         updateList();
     }
@@ -40,8 +41,8 @@ public class pokimonForAgents {
         {
             curr.setDistance(this.currLocationOfAgent);
         }
-
         this.list.sort(comp);
+        setCurrPath();
     }
     private void setCurrPath(){
         int i=0;
@@ -51,23 +52,33 @@ public class pokimonForAgents {
         list.get(i).getPokimon().setIsBusy(true);
         this.currPath= list.get(i).getPath(this.currLocationOfAgent);
         this.currPathIterator=this.currPath.listIterator();
-        this.currPokimon=list.get(i).getPokimon();
+//        this.currPokimon=list.get(i).getPokimon();
+//        this.currIndex=i;
     }
-    public CL_Pokemon getCurrPokimon(){return this.currPokimon;}
+//    public CL_Pokemon getCurrPokimon(){return this.currPokimon;}
 
     public int whereShouldIGoNow(int currLocationOfAgent){//i need to think if its good to get location
         if(currPathIterator==null) {//this is the first time
             updatecurrLocation(currLocationOfAgent);
-            setCurrPath();
         }
+
         if(currPathIterator.hasNext())
             return currPathIterator.next().getKey();
         else{
-            updatecurrLocation(currLocationOfAgent);
-            setCurrPath();
-            return currPathIterator.next().getKey();
+            return -1;//need to update pokimons
         }
     }
+    public void updatePokimons(ArrayList<CL_Pokemon> pokimons) {//after update edges
+        this.list=new ArrayList<>();
+        for (CL_Pokemon pokemon : pokimons) {
+            list.add(new pokemonPath(pokemon, this.graphAlgo));
+        }
+        this.currPathIterator=null;
+    }
+
+
+
+
 
 
 
@@ -77,6 +88,8 @@ public class pokimonForAgents {
         private double distance;
         private List<node_data> path;
         private dw_graph_algorithms graphAlgo;
+
+
         public pokemonPath(CL_Pokemon pokemon,DWGraph_Algo graphAlgo){
             this.pokimon=pokemon;
             this.graphAlgo=graphAlgo;
