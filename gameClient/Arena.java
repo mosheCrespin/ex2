@@ -36,10 +36,14 @@ public class Arena {
 	private Arena(directed_weighted_graph g, List<CL_Agent> r, List<CL_Pokemon> p) {
 		_gg = g;
 		this.setAgents(r);
-		this.setPokemons(p);
+//		this.setPokemons(p);
 	}
-	public void setPokemons(List<CL_Pokemon> f) {
-		this._pokemons = f;
+	public void setPokemons(String json) {
+		this._pokemons=json2Pokemons(json);
+		for(CL_Pokemon curr: this._pokemons)
+		{
+			updateEdge(curr,this._gg);
+		}
 	}
 	public void setAgents(List<CL_Agent> f) {
 		this._agents = f;

@@ -15,10 +15,6 @@ public class pokimonForAgents {
     private DWGraph_Algo graphAlgo;
     private List<node_data> currPath;
     private Iterator<node_data> currPathIterator;
-//    private CL_Pokemon currPokimon;
-//    private int currIndex;
-
-
 
 
     public pokimonForAgents(ArrayList<CL_Pokemon> pokimons,directed_weighted_graph graph){

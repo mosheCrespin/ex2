@@ -17,7 +17,11 @@ public class Ex2_Client implements Runnable{
 	private static Arena _ar;
 	public static void main(String[] a) {
 		Thread client = new Thread(new Ex2_Client());
+		Thread cc = new Thread(new Ex2_Client());
+
 		client.start();
+		cc.start();
+
 	}
 	
 	@Override
@@ -66,7 +70,7 @@ public class Ex2_Client implements Runnable{
 		//ArrayList<OOP_Point3D> rs = new ArrayList<OOP_Point3D>();
 		String fs =  game.getPokemons();
 		List<CL_Pokemon> ffs = Arena.json2Pokemons(fs);
-		_ar.setPokemons(ffs);
+//		_ar.setPokemons(ffs);
 		for(int i=0;i<log.size();i++) {
 			CL_Agent ag = log.get(i);
 			int id = ag.getID();
@@ -104,7 +108,7 @@ public class Ex2_Client implements Runnable{
 		//gg.init(g);
 		_ar = new Arena();
 		_ar.setGraph(gg);
-		_ar.setPokemons(Arena.json2Pokemons(fs));
+//		_ar.setPokemons(Arena.json2Pokemons(fs));
 		_win = new MyFrame("test Ex2");
 		_win.setSize(1000, 700);
 		_win.update(_ar);
