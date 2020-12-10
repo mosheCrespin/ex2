@@ -11,7 +11,7 @@ import java.util.*;
 
 
 
-public class DWGraph_Algo implements dw_graph_algorithms{
+public class DWGraph_Algo implements dw_graph_algorithms {
 
     private directed_weighted_graph myGraph;
 
@@ -40,7 +40,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         return copiedGraph;
     }
 
-    private directed_weighted_graph deepCopyOppositGraph() {
+    private  synchronized directed_weighted_graph  deepCopyOppositGraph() {
         directed_weighted_graph copiedGraph = new DWGraph_DS();
         node_data temp;
         for (node_data curr : myGraph.getV()) {
@@ -66,7 +66,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
 
 
 
-    public boolean isConnected() {
+    public synchronized  boolean isConnected() {
         directed_weighted_graph graphPointer = myGraph;
         int Node_size = graphPointer.nodeSize();
         if (Node_size < 2)//if the number of nodes is less than 2 the graph is connected
@@ -107,7 +107,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         return counters[1] == myGraph.nodeSize();//we already checked counters[0]
     }
 
-    public double shortestPathDist(int src, int dest) {
+    public synchronized double shortestPathDist(int src, int dest) {
         HashMap<node_data, Double> distances = new HashMap<>();
         Queue<node_data> q = new PriorityQueue<>(Comparator.comparingDouble(distances::get));
         initTags(myGraph);//init all the tags to -1
@@ -149,7 +149,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
         return distances.get(myGraph.getNode(dest));
     }
 
-    public List<node_data> shortestPath(int src, int dest) {
+    public synchronized List<node_data> shortestPath(int src, int dest) {
         HashMap<node_data, Double> distances = new HashMap<>();
         Queue<node_data> q = new PriorityQueue<>(Comparator.comparingDouble(distances::get));
         HashMap<node_data, node_data> father = new HashMap<>();//this hashmap is using to recover the path
@@ -205,7 +205,7 @@ public class DWGraph_Algo implements dw_graph_algorithms{
      * @param dest   the key of the dest node
      * @return a list of the path
      */
-    private LinkedList<node_data> buildPath(HashMap<node_data, node_data> father, node_data dest) {
+    private synchronized  LinkedList<node_data> buildPath(HashMap<node_data, node_data> father, node_data dest) {
         LinkedList<node_data> ans = new LinkedList<>();
         int end=dest.getKey();
         ans.add(dest);

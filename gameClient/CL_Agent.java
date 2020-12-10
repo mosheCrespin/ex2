@@ -7,6 +7,9 @@ import api.node_data;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
 
+import java.util.Iterator;
+import java.util.List;
+
 public class CL_Agent {
 		public static final double EPS = 0.0001;
 		private static int _count = 0;
@@ -20,10 +23,10 @@ public class CL_Agent {
 		private directed_weighted_graph _gg;
 		private CL_Pokemon _curr_fruit;
 		private long _sg_dt;
-
-		
 		private double _value;
-		
+		private List<node_data> currPath;
+		private Iterator<node_data> iteratorOfCurrPath;
+		public int dest=-1;
 		
 		public CL_Agent(directed_weighted_graph g, int start_node) {
 			_gg = g;
@@ -50,15 +53,30 @@ public class CL_Agent {
 					double value = ttt.getDouble("value");
 					this._pos = pp;
 					this.setCurrNode(src);
+					this.set_curr_edge(src,dest);
 					this.setSpeed(speed);
 					this.setNextNode(dest);
 					this.setMoney(value);
+					this.dest=dest;
+
 				}
 			}
 			catch(Exception e) {
 				e.printStackTrace();
 			}
 		}
+
+		public void setCurrPath(List<node_data> path){
+			this.currPath=path;
+			this.iteratorOfCurrPath=this.currPath.listIterator();
+		}
+		public List<node_data> getCurrPath(){return this.currPath;}
+		public int getNextNodeViaIterator(){
+			if(iteratorOfCurrPath.hasNext()) return iteratorOfCurrPath.next().getKey();
+			else return -1;
+		}
+
+
 		//@Override
 		public int getSrcNode() {return this._curr_node.getKey();}
 		public String toJSON() {
@@ -114,6 +132,11 @@ public class CL_Agent {
 			// TODO Auto-generated method stub
 			return this._value;
 		}
+		public void set_curr_edge(int src, int dest){
+			if(dest==-1) this._curr_edge=null;
+			else
+				this._curr_edge=_gg.getEdge(src,dest);
+		}
 
 
 
@@ -140,7 +163,7 @@ public class CL_Agent {
 		public void set_curr_fruit(CL_Pokemon curr_fruit) {
 			this._curr_fruit = curr_fruit;
 		}
-		public void set_SDT(long ddtt) {
+		public void set_SDT(long ddtt) {//check after how much time this agent will pass
 			long ddt = ddtt;
 			if(this._curr_edge!=null) {
 				double w = get_curr_edge().getWeight();

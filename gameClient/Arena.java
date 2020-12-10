@@ -24,7 +24,7 @@ public class Arena {
 	public static final double EPS1 = 0.001, EPS2=EPS1*EPS1, EPS=EPS2;
 	private directed_weighted_graph _gg;
 	private List<CL_Agent> _agents;
-	private List<CL_Pokemon> _pokemons;
+	private ArrayList<CL_Pokemon> _pokemons;
 	private List<String> _info;
 	private static Point3D MIN = new Point3D(0, 100,0);
 	private static Point3D MAX = new Point3D(0, 100,0);
@@ -55,7 +55,7 @@ public class Arena {
 				e.printStackTrace();
 			}
 		}
-	
+
 	public int getNumberOfAgents(){return this.numberOfAgents;}
 	public void setAgents(List<CL_Agent> f) {
 		this._agents = f;
@@ -85,7 +85,7 @@ public class Arena {
 		
 	}
 	public List<CL_Agent> getAgents() {return _agents;}
-	public List<CL_Pokemon> getPokemons() {return _pokemons;}
+	public ArrayList<CL_Pokemon> getPokemons() {return _pokemons;}
 
 	
 	public directed_weighted_graph getGraph() {

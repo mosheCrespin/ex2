@@ -17,11 +17,7 @@ public class Ex2_Client implements Runnable{
 	private static Arena _ar;
 	public static void main(String[] a) {
 		Thread client = new Thread(new Ex2_Client());
-		Thread cc = new Thread(new Ex2_Client());
-
 		client.start();
-		cc.start();
-
 	}
 	
 	@Override

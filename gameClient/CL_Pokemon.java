@@ -23,8 +23,8 @@ public class CL_Pokemon {
 		min_ro = -1;
 		isBusy=false;
 	}
-	public boolean isBusy(){return isBusy;}
-	public void setIsBusy(boolean flag){this.isBusy=flag;}
+	public synchronized boolean isBusy(){return isBusy;}
+	public synchronized void setIsBusy(boolean flag){this.isBusy=flag;}
 	public static CL_Pokemon init_from_json(String json) {
 		CL_Pokemon ans = null;
 		try {
