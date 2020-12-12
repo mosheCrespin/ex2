@@ -6,12 +6,14 @@ import gameClient.util.Point3D;
 import gameClient.util.Range;
 import gameClient.util.Range2D;
 import gameClient.util.Range2Range;
+import kotlin.jvm.Synchronized;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,8 +22,8 @@ import java.util.List;
  * @author boaz.benmoshe
  *
  */
-public class Arena {
-	public static final double EPS1 = 0.001, EPS2=EPS1*EPS1, EPS=EPS2;
+public class Arena{
+	public static final double EPS1 = 0.00001, EPS2=EPS1*EPS1, EPS=EPS2;
 	private directed_weighted_graph _gg;
 	private List<CL_Agent> _agents;
 	private ArrayList<CL_Pokemon> _pokemons;
@@ -29,6 +31,7 @@ public class Arena {
 	private static Point3D MIN = new Point3D(0, 100,0);
 	private static Point3D MAX = new Point3D(0, 100,0);
 	private int numberOfAgents;
+	private double[][] distanceArr;
 
 	public Arena() {;
 		_info = new ArrayList<String>();
@@ -38,7 +41,13 @@ public class Arena {
 		this.setAgents(r);
 //		this.setPokemons(p);
 	}
-	public void setPokemons(String json) {
+	public void setDistanceArr(double [][] arr){this.distanceArr=arr;}
+
+	public double[][] getDistanceArr() {
+		return distanceArr;
+	}
+
+	public synchronized void setPokemons(String json) {
 		this._pokemons=json2Pokemons(json);
 		for(CL_Pokemon curr: this._pokemons)
 		{
@@ -82,7 +91,6 @@ public class Arena {
 		double dx = x1-x0, dy = y1-y0;
 		MIN = new Point3D(x0-dx/10,y0-dy/10);
 		MAX = new Point3D(x1+dx/10,y1+dy/10);
-		
 	}
 	public List<CL_Agent> getAgents() {return _agents;}
 	public ArrayList<CL_Pokemon> getPokemons() {return _pokemons;}
@@ -127,7 +135,7 @@ public class Arena {
 				double v = pk.getDouble("value");
 				//double s = 0;//pk.getDouble("speed");
 				String p = pk.getString("pos");
-				CL_Pokemon f = new CL_Pokemon(new Point3D(p), t, v, 0, null);
+				CL_Pokemon f = new CL_Pokemon(i,new Point3D(p), t, v, 0, null);
 				ans.add(f);
 			}
 		}

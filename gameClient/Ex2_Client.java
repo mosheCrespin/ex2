@@ -18,6 +18,7 @@ public class Ex2_Client implements Runnable{
 	public static void main(String[] a) {
 		Thread client = new Thread(new Ex2_Client());
 		client.start();
+
 	}
 	
 	@Override
@@ -105,9 +106,9 @@ public class Ex2_Client implements Runnable{
 		_ar = new Arena();
 		_ar.setGraph(gg);
 //		_ar.setPokemons(Arena.json2Pokemons(fs));
-		_win = new MyFrame("test Ex2");
+		_win = new MyFrame("test Ex2",_ar);
 		_win.setSize(1000, 700);
-		_win.update(_ar);
+//		_win.update(_ar);
 
 		_win.show();
 		String info = game.toString();

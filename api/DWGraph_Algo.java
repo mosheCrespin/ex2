@@ -205,7 +205,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
      * @param dest   the key of the dest node
      * @return a list of the path
      */
-    private synchronized  LinkedList<node_data> buildPath(HashMap<node_data, node_data> father, node_data dest) {
+    private LinkedList<node_data> buildPath(HashMap<node_data, node_data> father, node_data dest) {
         LinkedList<node_data> ans = new LinkedList<>();
         int end=dest.getKey();
         ans.add(dest);

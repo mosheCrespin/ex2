@@ -6,11 +6,18 @@ import api.node_data;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class Ex2 implements Runnable {
     private Arena arena;
     private DWGraph_Algo graphAlgo;
+    private static MyFrame _win;
+    private double [][] distance;
+    private List[][] path;
+
 
 
     public static void main(String[] args) {
@@ -20,24 +27,40 @@ public class Ex2 implements Runnable {
 
     @Override
     public void run() {
-        int level = 20;
+        int level = 3;
         game_service game = Game_Server_Ex2.getServer(level);
+        System.out.println(game.getPokemons());
         init(game);
         Thread[] arrThreadOfAgents = new Thread[arena.getNumberOfAgents()];
         for (int i = 0; i < arrThreadOfAgents.length; i++) {
-            arrThreadOfAgents[i] = new Thread(new threadAgents(this.graphAlgo, arena, arena.getAgents().get(i), game));
+            arrThreadOfAgents[i] = new Thread(new threadAgents(this.distance,this.graphAlgo, arena, arena.getAgents().get(i), game));
         }
         for (Thread arrThreadOfAgent : arrThreadOfAgents) arrThreadOfAgent.start();
         Thread move = new Thread(new moveMethod(arena, game));
         move.start();
+
+        int ind = 0;
+        long dt =20;
+        while (game.isRunning()) {
+            try {
+                   _win.repaint();
+                    Thread.sleep(dt);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        System.exit(0);
     }
+
+
 
     private void init(game_service game) {
         this.arena = new Arena();
         this.graphAlgo = new DWGraph_Algo();
         this.arena.setGraph(Arena.LoadGraphFromJson(game.getGraph()));
         this.graphAlgo.init(this.arena.getGraph());
-
+        distnaceArr();
         this.arena.setPokemons(game.getPokemons());
         this.arena.setNumberOfAgents(game.toString());
         int[] ArrayAgents = new int[this.arena.getNumberOfAgents()];
@@ -50,13 +73,19 @@ public class Ex2 implements Runnable {
             j++;
         }
         this.arena.setAgents(Arena.getAgents(game.getAgents(), arena.getGraph()));
+        //
+        _win = new MyFrame("test Ex2",arena);
+        _win.setSize(800, 600);
+        _win.show();
+        _win.setTitle("Catch me if U can!" + game.toString());
+        //
         game.startGame();
         System.out.println(game.move());
     }
 
 
     public CL_Pokemon PokemonToRun() {
-        List<CL_Pokemon> PokemonsList=new ArrayList<CL_Pokemon>();
+        List<CL_Pokemon> PokemonsList;
         PokemonsList = this.arena.getPokemons();
         CL_Pokemon TakeThisPokemon = PokemonsList.get(0);
         int i = 1;
@@ -71,80 +100,28 @@ public class Ex2 implements Runnable {
         return TakeThisPokemon;//return where to init the Agent.
     }
 
+    private void distnaceArr(){
+        int nodeSize=graphAlgo.getGraph().nodeSize();
+        this.distance=new double[nodeSize][nodeSize];
+        this.path=new List[nodeSize][nodeSize];
+        for(int i=0;i<nodeSize;i++)
+            for(int j=0;j<nodeSize;j++) {
+                this.distance[i][j] = graphAlgo.shortestPathDist(i, j);
+            }
+        if(!graphAlgo.isConnected()) not_a_trap();
+    }
+    private void not_a_trap(){
+        int nodeSize=graphAlgo.getGraph().nodeSize();
+        for(int i=0;i<nodeSize;i++)
+            for(int j=0;j<nodeSize;j++)
+                if(((this.distance[i][j]==-1)&&(this.distance[j][i]!=-1))||(this.distance[j][i]==-1&&this.distance[i][j]!=-1)) {
+                    this.distance[i][j] = -1;
+                    this.distance[j][i]=-1;
+                }
 
-//    private void init(game_service game) {
-//        this.arena=new Arena();
-//        List<CL_Pokemon> list=new ArrayList<CL_Pokemon>();
-//        this.arena.setGraph(Arena.LoadGraphFromJson(game.getGraph()));
-//        this.arena.setPokemons(game.getPokemons());
-//        this.arena.setNumberOfAgents(game.toString());
-//        this.graphAlgo=new DWGraph_Algo();
-//        this.graphAlgo.init(arena.getGraph());
-//        for(int i=0;i<arena.getNumberOfAgents();i++){
-//            game.addAgent(i);
-//        }
-//        List<CL_Agent> agents=Arena.getAgents(game.getAgents(), arena.getGraph());
-//        arena.setAgents(agents);
-//        game.startGame();
-//
-//
-//        //game.getAgents()
-//    }
-
+    }
 
 }
-
-
-
-
-
-
-
-//
-//    private double timeToGetToPokimon(CL_Pokemon pokemon,CL_Agent agent){
-//        double weights=graphAlgo.shortestPathDist(agent.get_curr_edge().getSrc(),pokemon.get_edge().getSrc());
-//        if(weights==-1) return -1;
-//        weights+=pokemon.get_edge().getWeight();
-//        return weights/agent.getSpeed();
-//    }
-//    private void whereShouldIGo(CL_Agent agent){
-//        ArrayList<CL_Pokemon> pokemons=arena.getPokemons();
-//        CL_Pokemon min=pokemons.get(0);
-//        double tempSDT;
-//        double minSDT=Double.MAX_VALUE;
-//        for(int i=0;i<pokemons.size();i++){
-//            if(!pokemons.get(i).isBusy()) {//check if the pokimon is busy
-//                tempSDT = timeToGetToPokimon(pokemons.get(i), agent);
-//                if ((tempSDT < minSDT)&&tempSDT>=0) {
-//                    min = pokemons.get(i);
-//                    minSDT = tempSDT;
-//                }
-//            }
-//        }
-//        agent.set_curr_fruit(min);
-//        min.setIsBusy(true);
-//        List<node_data> path=this.graphAlgo.shortestPath(agent.get_curr_edge().getSrc(),min.get_edge().getSrc());
-//        path.add(arena.getGraph().getNode(min.get_edge().getDest()));
-//        agent.setCurrPath(path);
-//    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    ///////////////////////////////////////
 
 
 

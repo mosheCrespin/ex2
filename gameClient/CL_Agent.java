@@ -15,7 +15,6 @@ public class CL_Agent {
 		private static int _count = 0;
 		private static int _seed = 3331;
 		private int _id;
-	//	private long _key;
 		private geo_location _pos;
 		private double _speed;
 		private edge_data _curr_edge;
@@ -57,7 +56,7 @@ public class CL_Agent {
 					this.setSpeed(speed);
 					this.setNextNode(dest);
 					this.setMoney(value);
-					this.dest=dest;
+					this.dest=dest;///////////////TODO
 
 				}
 			}
@@ -108,7 +107,7 @@ public class CL_Agent {
 			this._curr_node = _gg.getNode(src);
 		}
 		public boolean isMoving() {
-			return this._curr_edge!=null;
+			return (this.dest!=-1);
 		}
 		public String toString() {
 			return toJSON();

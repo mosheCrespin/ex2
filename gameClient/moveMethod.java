@@ -12,11 +12,11 @@ public class moveMethod implements Runnable {
 
         while (game.isRunning()) {
             try {
-                Thread.sleep(10);
+                Thread.sleep(110);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println(game.move());
+            game.move();
             setAvgSpeed();
         }
         System.out.println(game.toString());

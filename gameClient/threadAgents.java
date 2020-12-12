@@ -2,6 +2,7 @@ package gameClient;
 
 import Server.Game_Server_Ex2;
 import api.DWGraph_Algo;
+import api.edge_data;
 import api.game_service;
 import api.node_data;
 import org.json.JSONArray;
@@ -16,13 +17,16 @@ public class threadAgents implements Runnable{
     private final DWGraph_Algo graphAlgo;
     private CL_Agent agent;
     private game_service game;
+    private double [][] distanceArr;
 
 
-    public threadAgents(DWGraph_Algo graph_algo,Arena arena,CL_Agent agent,game_service game){
+
+    public threadAgents(double[][] distanceArr,DWGraph_Algo graph_algo,Arena arena,CL_Agent agent,game_service game){
         this.arena=arena;
         this.graphAlgo=graph_algo;
         this.agent=agent;
         this.game=game;
+        this.distanceArr= distanceArr;
     }
     @Override
     public void run() {
@@ -31,21 +35,24 @@ public class threadAgents implements Runnable{
         game.chooseNextEdge(agent.getID(), nextNode);
         while (game.isRunning()) {
            while(nextNode!=-1) {
-                try {
-                        for (int i = 0; i < 3; i++) {//should work on that one
-                            Thread.sleep((long) agent.getSpeed() / 5 * 1000);
-                            updateAgent(game.getAgents());
+               updateAgent(game.getAgents());
+                if(!agent.isMoving()) {
+                    if(this.agent.get_curr_fruit().isBusy()) {//check if the Pokemon still exist, false means some other agent eat this pokemon
+                        nextNode = agent.getNextNodeViaIterator();
+                        if (nextNode != -1) {
+                            eatAnotherPokemon(agent.getSrcNode(), nextNode);
+                            game.chooseNextEdge(agent.getID(), nextNode);
                         }
                     }
-                 catch (InterruptedException e) {
-                    e.printStackTrace();
+                    else{//some agent did eat this pokemon
+                        arena.setPokemons(game.getPokemons());//update the pokemons
+                        whereShouldIGo(agent);//find me a new path
+                        nextNode=agent.getNextNodeViaIterator();
+                        game.chooseNextEdge(agent.getID(), nextNode);
+                    }
                 }
-                if(agent.dest==-1) {
-                    nextNode = agent.getNextNodeViaIterator();
-                    if(nextNode!=-1)
-                         game.chooseNextEdge(agent.getID(), nextNode);
-                }
-            }
+            }//just eat the pokemon so now find a new one to eat
+               agent.get_curr_fruit().setIsBusy(false);
                arena.setPokemons(game.getPokemons());
                whereShouldIGo(agent);
                nextNode=agent.getNextNodeViaIterator();
@@ -55,30 +62,43 @@ public class threadAgents implements Runnable{
         }
 
 
-
+      private void eatAnotherPokemon(int src,int dest){
+          edge_data currEdge=graphAlgo.getGraph().getEdge(src,dest);
+          for(CL_Pokemon currP: arena.getPokemons()){
+              if(currP.get_edge()==currEdge)
+                  currP.setIsBusy(false);
+          }
+      }
 
     private double timeToGetToPokimon(CL_Pokemon pokemon,CL_Agent agent){
-        double weights=graphAlgo.shortestPathDist(agent.getSrcNode(),pokemon.get_edge().getSrc());
-        if(weights==-1) return -1;
-        weights+=pokemon.get_edge().getWeight();
-        return weights/agent.getSpeed();
+        double weights = this.distanceArr[agent.getSrcNode()][pokemon.get_edge().getSrc()];
+        if (weights == -1) return -1;
+            weights += pokemon.get_edge().getWeight();
+            return weights / agent.getSpeed();
+    }
+    private double value(CL_Pokemon pokemon,CL_Agent agent){
+        double time=timeToGetToPokimon(pokemon,agent);
+        if(time==-1) return -1;
+            return time/pokemon.getValue();
     }
     private void whereShouldIGo(CL_Agent agent){
         ArrayList<CL_Pokemon> pokemons=arena.getPokemons();
         CL_Pokemon min=pokemons.get(0);
         double tempSDT;
         double minSDT=Double.MAX_VALUE;
-        for(int i=0;i<pokemons.size();i++){
-            if(!pokemons.get(i).isBusy()) {//check if the pokimon is busy
-                tempSDT = timeToGetToPokimon(pokemons.get(i), agent);
-                if ((tempSDT < minSDT)&&tempSDT>=0) {
-                    min = pokemons.get(i);
+        for (CL_Pokemon pokemon : pokemons) {
+            if (!pokemon.isBusy()) {//check if the pokimon is busy
+                tempSDT = value(pokemon, agent);
+                if ((tempSDT < minSDT) && tempSDT >= 0) {
+                    min = pokemon;
                     minSDT = tempSDT;
                 }
             }
         }
         agent.set_curr_fruit(min);
         min.setIsBusy(true);
+//        List path=this.pathArr[agent.getSrcNode()][min.get_edge().getSrc()];
+
         List<node_data> path=this.graphAlgo.shortestPath(agent.getSrcNode(),min.get_edge().getSrc());
         path.add(arena.getGraph().getNode(min.get_edge().getDest()));
         agent.setCurrPath(path);
