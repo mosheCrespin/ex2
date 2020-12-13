@@ -33,13 +33,11 @@ public class Ex2 implements Runnable {
         init(game);
         Thread[] arrThreadOfAgents = new Thread[arena.getNumberOfAgents()];
         for (int i = 0; i < arrThreadOfAgents.length; i++) {
-            arrThreadOfAgents[i] = new Thread(new threadAgents(this.distance, this.graphAlgo, arena, arena.getAgents().get(i), game));
+            arrThreadOfAgents[i] = new Thread(new threadAgents(this.path,this.distance, this.graphAlgo, arena, arena.getAgents().get(i), game));
         }
         for (Thread arrThreadOfAgent : arrThreadOfAgents) arrThreadOfAgent.start();
         Thread move = new Thread(new moveMethod(arena, game));
         move.start();
-
-        int ind = 0;
         long dt =20;
         while (game.isRunning()) {
             try {
@@ -102,8 +100,8 @@ public class Ex2 implements Runnable {
 
     private void distnaceArr(){
         int nodeSize=graphAlgo.getGraph().nodeSize();
+        pathArr(nodeSize);
         this.distance=new double[nodeSize][nodeSize];
-        this.path=new List[nodeSize][nodeSize];
         for(int i=0;i<nodeSize;i++)
             for(int j=0;j<nodeSize;j++) {
                 this.distance[i][j] = graphAlgo.shortestPathDist(i, j);
@@ -119,6 +117,13 @@ public class Ex2 implements Runnable {
                     this.distance[j][i]=-1;
                 }
 
+    }
+    private void pathArr(int nodeSize){
+        this.path=new List[nodeSize][nodeSize];
+        for(int i=0;i<nodeSize;i++)
+            for(int j=0;j<nodeSize;j++) {
+                this.path[i][j] = graphAlgo.shortestPath(i, j);
+            }
     }
 
 }

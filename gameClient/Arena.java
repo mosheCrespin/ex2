@@ -135,7 +135,9 @@ public class Arena{
 				double v = pk.getDouble("value");
 				//double s = 0;//pk.getDouble("speed");
 				String p = pk.getString("pos");
-				CL_Pokemon f = new CL_Pokemon(i,new Point3D(p), t, v, 0, null);
+				Point3D point=new Point3D(p);
+				double id= (point.x()+ point.y() + v+ t);//unique key for updates
+				CL_Pokemon f = new CL_Pokemon(id,point, t, v, 0, null);
 				ans.add(f);
 			}
 		}

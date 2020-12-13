@@ -41,7 +41,7 @@ public class MyPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         updateFrame();
         super.paintComponent(g);
-        drawBG(g);
+//        drawBG(g);
         drawNodes(g);
         drawEdges(g);
         drawAgants(g);
@@ -59,7 +59,8 @@ public class MyPanel extends JPanel {
         g.setColor(Color.YELLOW);
         g.fillOval((int)fp.x()-r,(int)fp.y()-r,2*r,2*r);
         g.setColor(Color.BLACK);
-        g.drawString(""+pokemon.getValue(),(int) fp.x(), (int) fp.y() - 2 * r);
+        String str= Double.toString(pokemon.getId()).substring(0, Double.toString(pokemon.getId()).indexOf('.')+1);
+        g.drawString("id: " + str + " , "+pokemon.getValue(),(int) fp.x(), (int) fp.y() - 2 * r);
     }
     }
     private void drawAgants(Graphics g) {
@@ -71,7 +72,8 @@ public class MyPanel extends JPanel {
             g.setColor(Color.green);
             g.fillOval((int) fp.x() - r, (int) fp.y() - r, 2 * r, 2 * r);
             g.setColor(Color.BLACK);
-            g.drawString("" + agent.getID(), (int) fp.x(), (int) fp.y() - 2 * r);
+            String str= Double.toString(agent.get_curr_fruit().getId()).substring(0, Double.toString(agent.get_curr_fruit().getId()).indexOf('.')+1);
+            g.drawString("to: " + str, (int) fp.x(), (int) fp.y() - 2 * r);
         }
     }
     private void drawEdges(Graphics g){
@@ -93,6 +95,16 @@ public class MyPanel extends JPanel {
             twoD.setColor(Color.black);
             twoD.setStroke(new BasicStroke(4));
             twoD.drawLine((int)s0.x(), (int)s0.y(), (int)d0.x(), (int)d0.y());
+//            double weight= e.getWeight();
+//            String str= Double.toString(weight).substring(0, Double.toString(weight).indexOf('.')+3);
+//            if(e.getSrc()-e.getDest()>0) {
+//                twoD.setColor(new Color(69, 28, 28));
+//                twoD.drawString(str, (int) (((s0.x()) + (d0.x()))/2 -4 ), (int) (((d0.y()) +(d0.y()))/2)+8);
+//            }
+//            else{
+//                twoD.setColor(Color.red);
+//                twoD.drawString(str, (int) (((s0.x()) + (d0.x())) / 2)+4, (int) (((s0.y()) + (d0.y()))/2 )+8);
+//            }
     }
     private void drawNodes(Graphics g) {
         g.setColor(Color.BLUE);
