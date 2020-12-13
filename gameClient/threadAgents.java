@@ -1,6 +1,5 @@
 package gameClient;
 
-import Server.Game_Server_Ex2;
 import api.DWGraph_Algo;
 import api.edge_data;
 import api.game_service;
@@ -36,21 +35,37 @@ public class threadAgents implements Runnable{
         while (game.isRunning()) {
            while(nextNode!=-1) {
                updateAgent(game.getAgents());
-                if(!agent.isMoving()) {
+                if(!agent.isMoving()) {//check if this agent is not moving RN
                     if(this.agent.get_curr_fruit().isBusy()) {//check if the Pokemon still exist, false means some other agent eat this pokemon
                         nextNode = agent.getNextNodeViaIterator();
-                        if (nextNode != -1) {
-                            eatAnotherPokemon(agent.getSrcNode(), nextNode);
+                        if (nextNode != -1) {//there is still path to this pokemon
+//                            if(isTherePokemonInThisEdge(agent.getSrcNode(),nextNode)) {
+                            isTherePokemonInThisEdge(agent.getSrcNode(), nextNode);
                             game.chooseNextEdge(agent.getID(), nextNode);
+                            game.move();
+//                                game.chooseNextEdge(agent.getID(), nextNode);
+//                                game.move();
+//                                while(agent.isMoving()){
+//                                    try {
+//                                        game.move();
+//                                        updateAgent(game.getAgents());
+//                                        Thread.sleep(30);
+//                                    } catch (InterruptedException e) {
+//                                        e.printStackTrace();
+//                                    }
+
+//                        }
                         }
                     }
                     else{//some agent did eat this pokemon
-                        arena.setPokemons(game.getPokemons());//update the pokemons
-                        whereShouldIGo(agent);//find me a new path
-                        nextNode=agent.getNextNodeViaIterator();
-                        game.chooseNextEdge(agent.getID(), nextNode);
+                                arena.setPokemons(game.getPokemons());//update the pokemons
+                                whereShouldIGo(agent);//find me a new path
+                                nextNode = agent.getNextNodeViaIterator();
+                                game.chooseNextEdge(agent.getID(), nextNode);
+                            }
+                            nextNode = agent.getNextNodeViaIterator();
+                        }
                     }
-                }
             }//just eat the pokemon so now find a new one to eat
                agent.get_curr_fruit().setIsBusy(false);
                arena.setPokemons(game.getPokemons());
@@ -59,7 +74,18 @@ public class threadAgents implements Runnable{
                game.chooseNextEdge(agent.getID(), nextNode);
 
            }
-        }
+
+      private void isTherePokemonInThisEdge(int src, int dest){
+          edge_data currEdge=graphAlgo.getGraph().getEdge(src,dest);
+//          boolean flag=false;
+          for(CL_Pokemon currP: arena.getPokemons()){
+              if(currP.get_edge()==currEdge) {
+                  currP.setIsBusy(false);
+//                 flag=true;
+              }
+          }
+      }
+
 
 
       private void eatAnotherPokemon(int src,int dest){
