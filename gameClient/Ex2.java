@@ -14,7 +14,7 @@ import java.util.List;
 public class Ex2 implements Runnable {
     private Arena arena;
     private DWGraph_Algo graphAlgo;
-    private static MyFrame _win;
+    private static MyJFrame _win;
     private double [][] distance;
     private List[][] path;
 
@@ -27,13 +27,13 @@ public class Ex2 implements Runnable {
 
     @Override
     public void run() {
-        int level = 3;
+        int level = 11;
         game_service game = Game_Server_Ex2.getServer(level);
         System.out.println(game.getPokemons());
         init(game);
         Thread[] arrThreadOfAgents = new Thread[arena.getNumberOfAgents()];
         for (int i = 0; i < arrThreadOfAgents.length; i++) {
-            arrThreadOfAgents[i] = new Thread(new threadAgents(this.distance,this.graphAlgo, arena, arena.getAgents().get(i), game));
+            arrThreadOfAgents[i] = new Thread(new threadAgents(this.distance, this.graphAlgo, arena, arena.getAgents().get(i), game));
         }
         for (Thread arrThreadOfAgent : arrThreadOfAgents) arrThreadOfAgent.start();
         Thread move = new Thread(new moveMethod(arena, game));
@@ -74,7 +74,7 @@ public class Ex2 implements Runnable {
         }
         this.arena.setAgents(Arena.getAgents(game.getAgents(), arena.getGraph()));
         //
-        _win = new MyFrame("test Ex2",arena);
+        _win = new MyJFrame("test Ex2",arena);
         _win.setSize(800, 600);
         _win.show();
         _win.setTitle("Catch me if U can!" + game.toString());
