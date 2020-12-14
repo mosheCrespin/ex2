@@ -19,12 +19,18 @@ public class MyPanel extends JPanel {
     private Arena arena;
     private gameClient.util.Range2Range _w2f;
     private BufferedImage backGround;
+    private BufferedImage boaz;
+    private BufferedImage ishay;
+    private BufferedImage moshe;
 
     public MyPanel(Arena arena){
         super();
         this.arena=arena;
         try {
             this.backGround= ImageIO.read(new File("BackGround.jpg"));//TODO should add path
+            this.boaz=ImageIO.read(new File("boaz.png"));
+            this.ishay=ImageIO.read(new File("ishay.png"));
+            this.moshe=ImageIO.read(new File("moshe.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -41,7 +47,7 @@ public class MyPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         updateFrame();
         super.paintComponent(g);
-//        drawBG(g);
+        drawBG(g);
         drawNodes(g);
         drawEdges(g);
         drawAgants(g);
@@ -49,15 +55,17 @@ public class MyPanel extends JPanel {
 
     }
     private void drawBG(Graphics g){
-        g.drawImage(backGround,0,0,this);//TODO should resize
+        g.drawImage(backGround,0,0,getWidth(),getHeight(),null);//TODO should resize
     }
     private void drawPokemons(Graphics g){
         int r=8;
     for(CL_Pokemon pokemon:arena.getPokemons()){
         geo_location pokemonPosition = pokemon.getLocation();
         geo_location fp = this._w2f.world2frame(pokemonPosition);
-        g.setColor(Color.YELLOW);
-        g.fillOval((int)fp.x()-r,(int)fp.y()-r,2*r,2*r);
+//        g.setColor(Color.YELLOW);
+//        g.fillOval((int)fp.x()-r,(int)fp.y()-r,2*r,2*r);
+//        this.scaledImage = boaz.getScaledInstance(getWidth()-1000000000,getHeight()-1000000000,Image.SCALE_SMOOTH);
+        g.drawImage(this.boaz,(int) fp.x(),(int) fp.y()-2,30,30,null);
         g.setColor(Color.BLACK);
         String str= Double.toString(pokemon.getId()).substring(0, Double.toString(pokemon.getId()).indexOf('.')+1);
         g.drawString("id: " + str + " , "+pokemon.getValue(),(int) fp.x(), (int) fp.y() - 2 * r);
@@ -65,15 +73,19 @@ public class MyPanel extends JPanel {
     }
     private void drawAgants(Graphics g) {
         int r = 8;
-
+        int i=0;
         for (CL_Agent agent : arena.getAgents()) {
             geo_location agentPosition = agent.getLocation();
             geo_location fp = this._w2f.world2frame(agentPosition);
-            g.setColor(Color.green);
-            g.fillOval((int) fp.x() - r, (int) fp.y() - r, 2 * r, 2 * r);
+//            g.setColor(Color.green);
+//            g.fillOval((int) fp.x() - r, (int) fp.y() - r, 2 * r, 2 * r);
+            if(i%2==0)
+                g.drawImage(this.moshe,(int) fp.x(),(int) fp.y()-2,30,30,null);
+            else g.drawImage(this.ishay,(int) fp.x(),(int) fp.y()-2,30,30,null);
             g.setColor(Color.BLACK);
             String str= Double.toString(agent.get_curr_fruit().getId()).substring(0, Double.toString(agent.get_curr_fruit().getId()).indexOf('.')+1);
             g.drawString("to: " + str, (int) fp.x(), (int) fp.y() - 2 * r);
+            i++;
         }
     }
     private void drawEdges(Graphics g){
@@ -93,7 +105,7 @@ public class MyPanel extends JPanel {
             geo_location d0 = this._w2f.world2frame(d);
             Graphics2D twoD = (Graphics2D) g;
             twoD.setColor(Color.black);
-            twoD.setStroke(new BasicStroke(4));
+            twoD.setStroke(new BasicStroke(6));
             twoD.drawLine((int)s0.x(), (int)s0.y(), (int)d0.x(), (int)d0.y());
 //            double weight= e.getWeight();
 //            String str= Double.toString(weight).substring(0, Double.toString(weight).indexOf('.')+3);
@@ -108,7 +120,7 @@ public class MyPanel extends JPanel {
     }
     private void drawNodes(Graphics g) {
         g.setColor(Color.BLUE);
-        g.setFont(new Font("", Font.BOLD, 10));
+        g.setFont(new Font("", Font.BOLD, 14));
         for (node_data node : arena.getGraph().getV()) {
             drawNode(node, 5, g);
         }
@@ -117,7 +129,7 @@ public class MyPanel extends JPanel {
         private void drawNode(node_data n, int r, Graphics g) {
             geo_location pos = n.getLocation();
             geo_location fp = this._w2f.world2frame(pos);
-            g.fillOval((int)fp.x()-r, (int)fp.y()-r, 10, 10);
+            g.fillOval((int)fp.x()-r, (int)fp.y()-r, 14, 14);
             g.drawString(""+n.getKey(), (int)fp.x(), (int)fp.y()-2*r);
         }
 

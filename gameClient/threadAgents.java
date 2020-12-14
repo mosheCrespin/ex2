@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -61,17 +62,17 @@ public class threadAgents implements Runnable{
               }
           }
       }
-//    private double timeToGetToPokimon(CL_Pokemon pokemon,CL_Agent agent){
-//        double weights = this.distanceArr[agent.getSrcNode()][pokemon.get_edge().getSrc()];
-//        if (weights == -1) return -1;
-//            weights += pokemon.get_edge().getWeight();
-//            return weights / agent.getSpeed();
-//    }
-    private double value(CL_Pokemon pokemon,CL_Agent agent){
-//        double time=timeToGetToPokimon(pokemon,agent);
+    private double timeToGetToPokimon(CL_Pokemon pokemon,CL_Agent agent){
         double weights = this.distanceArr[agent.getSrcNode()][pokemon.get_edge().getSrc()];
-        if(weights==-1) return -1;
-            return weights/pokemon.getValue();
+        if (weights == -1) return -1;
+            weights += pokemon.get_edge().getWeight();
+            return weights / agent.getSpeed();
+    }
+    private double value(CL_Pokemon pokemon,CL_Agent agent){
+        double time=timeToGetToPokimon(pokemon,agent);
+//        double weights = this.distanceArr[agent.getSrcNode()][pokemon.get_edge().getSrc()];
+//        if(weights==-1) return -1;
+            return time /pokemon.getValue();
     }
     private void whereShouldIGo(CL_Agent agent){
         ArrayList<CL_Pokemon> pokemons=arena.getPokemons();

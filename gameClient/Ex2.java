@@ -2,13 +2,9 @@ package gameClient;
 import Server.Game_Server_Ex2;
 import api.DWGraph_Algo;
 import api.game_service;
-import api.node_data;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.awt.*;
-import java.util.*;
+
+import javax.swing.*;
 import java.util.List;
 
 public class Ex2 implements Runnable {
@@ -17,6 +13,11 @@ public class Ex2 implements Runnable {
     private static MyJFrame _win;
     private double [][] distance;
     private List[][] path;
+    private int level;
+    private int id;
+    MyLoginPage entrancePage;
+
+
 
 
 
@@ -25,13 +26,16 @@ public class Ex2 implements Runnable {
         main.start();
     }
 
+
     @Override
     public void run() {
-        int level = 11;
-        game_service game = Game_Server_Ex2.getServer(level);
+        entrancePage();
+        game_service game = Game_Server_Ex2.getServer(this.level);
+        if(this.id!=-1)
+            game.login(this.id);
         System.out.println(game.getPokemons());
         init(game);
-        Thread[] arrThreadOfAgents = new Thread[arena.getNumberOfAgents()];
+        Thread[] arrThreadOfAgents = new Thread[this.arena.getNumberOfAgents()];
         for (int i = 0; i < arrThreadOfAgents.length; i++) {
             arrThreadOfAgents[i] = new Thread(new threadAgents(this.path,this.distance, this.graphAlgo, arena, arena.getAgents().get(i), game));
         }
@@ -41,17 +45,29 @@ public class Ex2 implements Runnable {
         long dt =20;
         while (game.isRunning()) {
             try {
-                   _win.repaint();
+                   this._win.repaint();
                     Thread.sleep(dt);
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        System.out.println(game.toString());
         System.exit(0);
     }
 
 
+    public void entrancePage(){
+        this.entrancePage=new MyLoginPage();
+        while(!this.entrancePage.get_user_successfuly_connected()){
+            System.out.println("waiting for input");
+        }
+        System.out.println("starting game...");
+        this.level=entrancePage.getLevel_num();
+        this.id=entrancePage.getId_num();
+        if(!entrancePage.get_user_enterd_id()) this.id=-1;
+        entrancePage.setVisible(false);
+    }
 
     private void init(game_service game) {
         this.arena = new Arena();
@@ -74,11 +90,16 @@ public class Ex2 implements Runnable {
         //
         _win = new MyJFrame("test Ex2",arena);
         _win.setSize(800, 600);
+        MyPanel panel=new MyPanel(arena);
+        _win.add(panel);
         _win.show();
         _win.setTitle("Catch me if U can!" + game.toString());
+        _win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //
         game.startGame();
         System.out.println(game.move());
+        game.move();
+        game.move();
     }
 
 
@@ -109,6 +130,7 @@ public class Ex2 implements Runnable {
         if(!graphAlgo.isConnected()) not_a_trap();
     }
     private void not_a_trap(){
+
         int nodeSize=graphAlgo.getGraph().nodeSize();
         for(int i=0;i<nodeSize;i++)
             for(int j=0;j<nodeSize;j++)
