@@ -1,6 +1,7 @@
 package gameClient;
 
 import api.game_service;
+import com.google.gson.JsonObject;
 
 public class moveMethod implements Runnable {
     private Arena arena;
@@ -12,14 +13,14 @@ public class moveMethod implements Runnable {
 
         while (game.isRunning()) {
             try {
-                Thread.sleep(105);
+                Thread.sleep(100);
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             game.move();
             setAvgSpeed();
         }
-        System.out.println(game.toString());
     }
     private void setAvgSpeed(){
         double avg=0;

@@ -17,10 +17,6 @@ public class Ex2 implements Runnable {
     private int id;
     MyLoginPage entrancePage;
 
-
-
-
-
     public static void main(String[] args) {
         Thread main = new Thread(new Ex2());
         main.start();
@@ -33,7 +29,6 @@ public class Ex2 implements Runnable {
         game_service game = Game_Server_Ex2.getServer(this.level);
         if(this.id!=-1)
             game.login(this.id);
-        System.out.println(game.getPokemons());
         init(game);
         Thread[] arrThreadOfAgents = new Thread[this.arena.getNumberOfAgents()];
         for (int i = 0; i < arrThreadOfAgents.length; i++) {
@@ -42,12 +37,12 @@ public class Ex2 implements Runnable {
         for (Thread arrThreadOfAgent : arrThreadOfAgents) arrThreadOfAgent.start();
         Thread move = new Thread(new moveMethod(arena, game));
         move.start();
-        long dt =20;
+        long dt =30;
         while (game.isRunning()) {
             try {
-                   this._win.repaint();
+                   _win.repaint();
                     Thread.sleep(dt);
-
+                    arena.updateInfo(game.toString(), (int) (game.timeToEnd()/1000));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -57,15 +52,18 @@ public class Ex2 implements Runnable {
     }
 
 
+
+
+
     public void entrancePage(){
         this.entrancePage=new MyLoginPage();
-        while(!this.entrancePage.get_user_successfuly_connected()){
-            System.out.println("waiting for input");
+        while(!this.entrancePage.get_user_successfully_connected()){
+            System.out.print("");
         }
         System.out.println("starting game...");
         this.level=entrancePage.getLevel_num();
         this.id=entrancePage.getId_num();
-        if(!entrancePage.get_user_enterd_id()) this.id=-1;
+        if(!entrancePage.get_user_entered_id()) this.id=-1;
         entrancePage.setVisible(false);
     }
 
@@ -88,17 +86,16 @@ public class Ex2 implements Runnable {
         }
         this.arena.setAgents(Arena.getAgents(game.getAgents(), arena.getGraph()));
         //
-        _win = new MyJFrame("test Ex2",arena);
+        _win = new MyJFrame("Pokemon Game",arena);
         _win.setSize(800, 600);
         MyPanel panel=new MyPanel(arena);
         _win.add(panel);
         _win.show();
-        _win.setTitle("Catch me if U can!" + game.toString());
+        _win.setTitle("Catch me if U can!");
         _win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //
+        arena.setInfo(game.toString());
         game.startGame();
-        System.out.println(game.move());
-        game.move();
         game.move();
     }
 
