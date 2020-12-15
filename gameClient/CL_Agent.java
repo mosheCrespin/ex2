@@ -23,8 +23,6 @@ public class CL_Agent {
 		private CL_Pokemon _curr_fruit;
 		private long _sg_dt;
 		private double _value;
-		private List<node_data> currPath;
-		private Iterator<node_data> iteratorOfCurrPath;
 		public int dest=-1;
 		
 		public CL_Agent(directed_weighted_graph g, int start_node) {
@@ -63,16 +61,6 @@ public class CL_Agent {
 			catch(Exception e) {
 				e.printStackTrace();
 			}
-		}
-
-		public void setCurrPath(List<node_data> path){
-			this.currPath=path;
-			this.iteratorOfCurrPath=this.currPath.listIterator();
-		}
-		public List<node_data> getCurrPath(){return this.currPath;}
-		public int getNextNodeViaIterator(){
-			if(iteratorOfCurrPath.hasNext()) return iteratorOfCurrPath.next().getKey();
-			else return -1;
 		}
 
 
@@ -136,8 +124,6 @@ public class CL_Agent {
 			else
 				this._curr_edge=_gg.getEdge(src,dest);
 		}
-
-
 
 		public int getNextNode() {
 			int ans = -2;

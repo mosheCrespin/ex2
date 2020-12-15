@@ -2,13 +2,9 @@ package gameClient;
 import Server.Game_Server_Ex2;
 import api.DWGraph_Algo;
 import api.game_service;
-import api.node_data;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.awt.*;
-import java.util.*;
+
+import javax.swing.*;
 import java.util.List;
 
 public class Ex2 implements Runnable {
@@ -17,43 +13,59 @@ public class Ex2 implements Runnable {
     private static MyJFrame _win;
     private double [][] distance;
     private List[][] path;
-
-
+    private int level;
+    private int id;
+    MyLoginPage entrancePage;
 
     public static void main(String[] args) {
         Thread main = new Thread(new Ex2());
         main.start();
     }
 
+
     @Override
     public void run() {
-        int level = 11;
-        game_service game = Game_Server_Ex2.getServer(level);
-        System.out.println(game.getPokemons());
+        entrancePage();
+        game_service game = Game_Server_Ex2.getServer(this.level);
+        if(this.id!=-1)
+            game.login(this.id);
         init(game);
-        Thread[] arrThreadOfAgents = new Thread[arena.getNumberOfAgents()];
+        Thread[] arrThreadOfAgents = new Thread[this.arena.getNumberOfAgents()];
         for (int i = 0; i < arrThreadOfAgents.length; i++) {
-            arrThreadOfAgents[i] = new Thread(new threadAgents(this.distance, this.graphAlgo, arena, arena.getAgents().get(i), game));
+            arrThreadOfAgents[i] = new Thread(new threadAgents(this.path,this.distance, this.graphAlgo, arena, arena.getAgents().get(i), game));
         }
         for (Thread arrThreadOfAgent : arrThreadOfAgents) arrThreadOfAgent.start();
         Thread move = new Thread(new moveMethod(arena, game));
         move.start();
-
-        int ind = 0;
-        long dt =20;
+        long dt =30;
         while (game.isRunning()) {
             try {
                    _win.repaint();
                     Thread.sleep(dt);
-
+                    arena.updateInfo(game.toString(), (int) (game.timeToEnd()/1000));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+        System.out.println(game.toString());
         System.exit(0);
     }
 
 
+
+
+
+    public void entrancePage(){
+        this.entrancePage=new MyLoginPage();
+        while(!this.entrancePage.get_user_successfully_connected()){
+            System.out.print("");
+        }
+        System.out.println("starting game...");
+        this.level=entrancePage.getLevel_num();
+        this.id=entrancePage.getId_num();
+        if(!entrancePage.get_user_entered_id()) this.id=-1;
+        entrancePage.setVisible(false);
+    }
 
     private void init(game_service game) {
         this.arena = new Arena();
@@ -74,13 +86,17 @@ public class Ex2 implements Runnable {
         }
         this.arena.setAgents(Arena.getAgents(game.getAgents(), arena.getGraph()));
         //
-        _win = new MyJFrame("test Ex2",arena);
+        _win = new MyJFrame("Pokemon Game",arena);
         _win.setSize(800, 600);
+        MyPanel panel=new MyPanel(arena);
+        _win.add(panel);
         _win.show();
-        _win.setTitle("Catch me if U can!" + game.toString());
+        _win.setTitle("Catch me if U can!");
+        _win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //
+        arena.setInfo(game.toString());
         game.startGame();
-        System.out.println(game.move());
+        game.move();
     }
 
 
@@ -102,8 +118,8 @@ public class Ex2 implements Runnable {
 
     private void distnaceArr(){
         int nodeSize=graphAlgo.getGraph().nodeSize();
+        pathArr(nodeSize);
         this.distance=new double[nodeSize][nodeSize];
-        this.path=new List[nodeSize][nodeSize];
         for(int i=0;i<nodeSize;i++)
             for(int j=0;j<nodeSize;j++) {
                 this.distance[i][j] = graphAlgo.shortestPathDist(i, j);
@@ -111,6 +127,7 @@ public class Ex2 implements Runnable {
         if(!graphAlgo.isConnected()) not_a_trap();
     }
     private void not_a_trap(){
+
         int nodeSize=graphAlgo.getGraph().nodeSize();
         for(int i=0;i<nodeSize;i++)
             for(int j=0;j<nodeSize;j++)
@@ -119,6 +136,13 @@ public class Ex2 implements Runnable {
                     this.distance[j][i]=-1;
                 }
 
+    }
+    private void pathArr(int nodeSize){
+        this.path=new List[nodeSize][nodeSize];
+        for(int i=0;i<nodeSize;i++)
+            for(int j=0;j<nodeSize;j++) {
+                this.path[i][j] = graphAlgo.shortestPath(i, j);
+            }
     }
 
 }

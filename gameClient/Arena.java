@@ -23,29 +23,15 @@ import java.util.List;
  *
  */
 public class Arena{
-	public static final double EPS1 = 0.00001, EPS2=EPS1*EPS1, EPS=EPS2;
+	public static final double EPS1 = 0.000001 , EPS2=EPS1*EPS1, EPS=EPS2;
 	private directed_weighted_graph _gg;
 	private List<CL_Agent> _agents;
 	private ArrayList<CL_Pokemon> _pokemons;
-	private List<String> _info;
-	private static Point3D MIN = new Point3D(0, 100,0);
-	private static Point3D MAX = new Point3D(0, 100,0);
+	private ArrayList<Integer> _info;
 	private int numberOfAgents;
-	private double[][] distanceArr;
+	private double timeLeft;
 
-	public Arena() {;
-		_info = new ArrayList<String>();
-	}
-	private Arena(directed_weighted_graph g, List<CL_Agent> r, List<CL_Pokemon> p) {
-		_gg = g;
-		this.setAgents(r);
-//		this.setPokemons(p);
-	}
-	public void setDistanceArr(double [][] arr){this.distanceArr=arr;}
-
-	public double[][] getDistanceArr() {
-		return distanceArr;
-	}
+	public Arena() {}
 
 	public synchronized void setPokemons(String json) {
 		this._pokemons=json2Pokemons(json);
@@ -65,45 +51,57 @@ public class Arena{
 			}
 		}
 
+		public synchronized void setInfo (String json){
+		this._info = new ArrayList<>();
+		try {
+			JSONObject game = new JSONObject(json);
+			JSONObject realInfo = game.getJSONObject("GameServer");
+			int pokemons = realInfo.getInt("pokemons");
+			int moves = realInfo.getInt("moves");
+			int grade = realInfo.getInt("grade");
+			int game_level = realInfo.getInt("game_level");
+			int agents = realInfo.getInt("agents");
+			this._info.add(0, pokemons);
+			this._info.add(1, agents);
+			this._info.add(2, game_level);
+			this._info.add(3, moves);
+			this._info.add(4, grade);
+			this._info.add(5,0);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+		public synchronized ArrayList<Integer> getInfo () {
+		return _info;
+	}
+		public synchronized void updateInfo(String json, int timeLeft ){
+		try {
+			JSONObject game = new JSONObject(json);
+			JSONObject realInfo = game.getJSONObject("GameServer");
+			int moves = realInfo.getInt("moves");
+			int grade = realInfo.getInt("grade");
+			this._info.add(3,moves);
+			this._info.add(4,grade);
+			this._info.add(5,timeLeft);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+
+
+
 	public int getNumberOfAgents(){return this.numberOfAgents;}
 	public void setAgents(List<CL_Agent> f) {
 		this._agents = f;
 	}
 	public void setGraph(directed_weighted_graph g) {this._gg =g;}//init();}
-	private void init( ) {
-		MIN=null; MAX=null;
-		double x0=0,x1=0,y0=0,y1=0;
-		Iterator<node_data> iter = _gg.getV().iterator();
-		while(iter.hasNext()) {
-			geo_location c = iter.next().getLocation();
-			if(MIN==null) {
-				x0 = c.x();
-				y0=c.y();
-				x1=x0;
-				y1=y0;
-				MIN = new Point3D(x0,y0);
-			}
-			if(c.x() < x0) {x0=c.x();}
-			if(c.y() < y0) {y0=c.y();}
-			if(c.x() > x1) {x1=c.x();}
-			if(c.y() > y1) {y1=c.y();}
-		}
-		double dx = x1-x0, dy = y1-y0;
-		MIN = new Point3D(x0-dx/10,y0-dy/10);
-		MAX = new Point3D(x1+dx/10,y1+dy/10);
-	}
 	public List<CL_Agent> getAgents() {return _agents;}
 	public ArrayList<CL_Pokemon> getPokemons() {return _pokemons;}
 
-	
 	public directed_weighted_graph getGraph() {
 		return _gg;
-	}
-	public List<String> get_info() {
-		return _info;
-	}
-	public void set_info(List<String> _info) {
-		this._info = _info;
 	}
 
 	////////////////////////////////////////////////////
@@ -117,7 +115,6 @@ public class Arena{
 				c.update(ags.get(i).toString());
 				ans.add(c);
 			}
-			//= getJSONArray("Agents");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -135,7 +132,9 @@ public class Arena{
 				double v = pk.getDouble("value");
 				//double s = 0;//pk.getDouble("speed");
 				String p = pk.getString("pos");
-				CL_Pokemon f = new CL_Pokemon(i,new Point3D(p), t, v, 0, null);
+				Point3D point=new Point3D(p);
+				double id= (point.x()+ point.y() + v+ t);//unique key for updates
+				CL_Pokemon f = new CL_Pokemon(id,point, t, v, 0, null);
 				ans.add(f);
 			}
 		}
