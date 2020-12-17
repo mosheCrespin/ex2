@@ -239,17 +239,14 @@ public class DWGraph_Algo implements dw_graph_algorithms {
             builder.registerTypeAdapter(directed_weighted_graph.class, new graphJsonDeserializer());
             Gson gson = builder.create();
             FileReader reader = new FileReader(file);
-            directed_weighted_graph graph=gson.fromJson(reader,directed_weighted_graph.class);
-            System.out.println(graph);
-            if(graph.equals(this.myGraph))
-                this.myGraph=graph;
-
+            directed_weighted_graph graph = gson.fromJson(reader, directed_weighted_graph.class);
+            if (graph != null)
+                this.myGraph = graph;
             else return false;
-        }catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
             return false;
         }
-
         return true;
     }
 

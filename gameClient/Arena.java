@@ -6,14 +6,12 @@ import gameClient.util.Point3D;
 import gameClient.util.Range;
 import gameClient.util.Range2D;
 import gameClient.util.Range2Range;
-import kotlin.jvm.Synchronized;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,10 +27,8 @@ public class Arena{
 	private ArrayList<CL_Pokemon> _pokemons;
 	private ArrayList<Integer> _info;
 	private int numberOfAgents;
-	private double timeLeft;
 
 	public Arena() {}
-
 	public synchronized void setPokemons(String json) {
 		this._pokemons=json2Pokemons(json);
 		for(CL_Pokemon curr: this._pokemons)
@@ -50,7 +46,6 @@ public class Arena{
 				e.printStackTrace();
 			}
 		}
-
 		public synchronized void setInfo (String json){
 		this._info = new ArrayList<>();
 		try {
@@ -87,11 +82,6 @@ public class Arena{
 			e.printStackTrace();
 		}
 	}
-
-
-
-
-
 	public int getNumberOfAgents(){return this.numberOfAgents;}
 	public void setAgents(List<CL_Agent> f) {
 		this._agents = f;
@@ -103,7 +93,6 @@ public class Arena{
 	public directed_weighted_graph getGraph() {
 		return _gg;
 	}
-
 	////////////////////////////////////////////////////
 	public static List<CL_Agent> getAgents(String aa, directed_weighted_graph gg) {
 		ArrayList<CL_Agent> ans = new ArrayList<CL_Agent>();
@@ -130,7 +119,6 @@ public class Arena{
 				JSONObject pk = pp.getJSONObject("Pokemon");
 				int t = pk.getInt("type");
 				double v = pk.getDouble("value");
-				//double s = 0;//pk.getDouble("speed");
 				String p = pk.getString("pos");
 				Point3D point=new Point3D(p);
 				double id= (point.x()+ point.y() + v+ t);//unique key for updates
@@ -142,21 +130,17 @@ public class Arena{
 		return ans;
 	}
 	public static void updateEdge(CL_Pokemon fr, directed_weighted_graph g) {
-		//	oop_edge_data ans = null;
-		Iterator<node_data> itr = g.getV().iterator();
-		while(itr.hasNext()) {
-			node_data v = itr.next();
-			Iterator<edge_data> iter = g.getE(v.getKey()).iterator();
-			while(iter.hasNext()) {
-				edge_data e = iter.next();
-				boolean f = isOnEdge(fr.getLocation(), e,fr.getType(), g);
-				if(f) {fr.set_edge(e);}
+		for (node_data v : g.getV()) {
+			for (edge_data e : g.getE(v.getKey())) {
+				boolean f = isOnEdge(fr.getLocation(), e, fr.getType(), g);
+				if (f) {
+					fr.set_edge(e);
+				}
 			}
 		}
 	}
 
 	private static boolean isOnEdge(geo_location p, geo_location src, geo_location dest ) {
-
 		boolean ans = false;
 		double dist = src.distance(dest);
 		double d1 = src.distance(p) + p.distance(dest);

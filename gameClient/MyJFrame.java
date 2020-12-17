@@ -4,7 +4,6 @@ import javax.swing.*;
 
 public class MyJFrame extends JFrame {
     private Arena arena;
-//    private MyPanel panel;
     public MyJFrame(String title,Arena arena){
         super(title);
         this.arena=arena;
