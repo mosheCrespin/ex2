@@ -10,7 +10,10 @@ public class DWGraph_DS implements directed_weighted_graph {
     private HashMap<Integer, HashMap<Integer, edge_data>> My_graph_edges;//src-->dest
     private transient HashMap<Integer, HashSet<Integer>> pointersToDest;//dest-->src
 
-    //constructor
+    /**
+     * constructor for DWGraph_DS
+     * This method initialize the hashmaps and update the numberOfNodes,numberOfEdges,amountOfChanges to 0.
+     */
     public DWGraph_DS() {
         this.My_graph_edges = new HashMap<>();
         this.pointersToDest = new HashMap<>();
@@ -22,7 +25,7 @@ public class DWGraph_DS implements directed_weighted_graph {
     /**
      * returns the node_data by the node_id,
      * @param key - the node_id
-     * @return the node_data by the node_id, null if none.
+     * @return the node_data , null if none.
      */
     public node_data getNode(int key) {
         return myGraph.get(key);
@@ -51,11 +54,11 @@ public class DWGraph_DS implements directed_weighted_graph {
     }
     /**
      * adds a new node to the graph with the given node_data.
-     * Note: this method should run in O(1) time.
+     * Note: this method  run in O(1) time.
      * this method add the new node to 3 hashmaps,one contains the 'n' node in her key and in the value the dest .
      * My_graph_edges contains the 'n' id  in the key of the hashmap and in the value contains another hashmap that
-     * contains key and value. in the key there is a id dest from the 'n' node,and in the value there id the edge that connect between the nodes.
-     * pointersToDest contains in the key of this hashmap the node 'n' and in the walue of this hasmap there is hashset that contains
+     * contains key and value ,in the key there is a id dest from the 'n' node,and in the value there id the edge that connect between the nodes.
+     * pointersToDest contains in the key of this hashmap the node 'n' and in the value of this hashmap there is hashset that contains
      * all the dest nodes that start from 'n' node.
      *  where the node start from, which node connect to 'n' node
      *
@@ -75,7 +78,7 @@ public class DWGraph_DS implements directed_weighted_graph {
 
     /**
      * Connects an edge with weight w between node src to node dest.
-     * * Note: this method should run in O(1) time.
+     *  Note: this method run in O(1) time.
      * this method update the hashmaps that the nodes are connects.
      * @param src - the source of the edge.
      * @param dest - the destination of the edge.
@@ -96,7 +99,7 @@ public class DWGraph_DS implements directed_weighted_graph {
     /**
      * This method returns a pointer (shallow copy) for the
      * collection representing all the nodes in the graph.
-     * Note: this method should run in O(1) time.
+     * Note: this method run in O(1) time.
      * @return Collection<node_data>
      */
     public Collection<node_data> getV() {
@@ -106,7 +109,7 @@ public class DWGraph_DS implements directed_weighted_graph {
      * This method returns a pointer (shallow copy) for the
      * collection representing all the edges getting out of
      * the given node (all the edges starting (source) at the given node).
-     * Note: this method should run in O(k) time, k being the collection size.
+     * Note: this method run in O(1) time.
      * @return Collection<edge_data>
      */
     public Collection<edge_data> getE(int node_id) {

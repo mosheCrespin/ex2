@@ -6,6 +6,8 @@ import api.node_data;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,8 +19,9 @@ public class threadAgents implements Runnable{
     private game_service game;
     private double [][] distanceArr;
     private List<node_data> [][]pathes;
-    private List<node_data> currPath;
-    private Iterator<node_data> currIterator;
+    private ArrayList<Integer> repeat;
+    private ArrayList<node_data> _currPath;
+    private int iterator;
 
     public threadAgents(List<node_data> [][]path ,double[][] distanceArr,DWGraph_Algo graph_algo,Arena arena,CL_Agent agent,game_service game){
         this.arena=arena;
@@ -27,67 +30,107 @@ public class threadAgents implements Runnable{
         this.game=game;
         this.distanceArr= distanceArr;
         this.pathes=path;
+        this.repeat=new ArrayList<>();
     }
+
     @Override
     public void run() {
-        whereShouldIGo(this.agent);
-        game.chooseNextEdge(agent.getID(), this.currIterator.next().getKey());
+        int nextNode;
+        whereShouldIGo();
         while (game.isRunning()) {
-            while (this.currIterator.hasNext()&&this.agent.get_curr_fruit().isStillFood()) {//there is still path to this pokemon
+            while (iterator<this._currPath.size()&&this.agent.get_curr_fruit().isStillFood()) {//there is still path to this pokemon
                 updateAgent(game.getAgents());
                     if (!agent.isMoving()) {//check if this agent is not moving RN
-                            int nextNode = this.currIterator.next().getKey();
-                            isTherePokemonInThisEdge(agent.getSrcNode(), nextNode);
+                            nextNode=this._currPath.get(iterator).getKey();
+                            iterator++;
                             game.chooseNextEdge(agent.getID(), nextNode);
+                            repeat.add(nextNode);
+                            isTherePokemonInThisEdge(agent.getSrcNode(), nextNode);
+                            if(repeat.size()==6){
+                                strike();
+                            }
+                        System.out.println("agent :" + agent.getID()+ " moved from: " + agent.getSrcNode()
+                                    + " to: " +nextNode );
                     }
             }
             //just eat the pokemon so now find a new one to eat
+            updateAgent(game.getAgents());
+            while(agent.isMoving()){
+                updateAgent(game.getAgents());
+            }
             agent.get_curr_fruit().setIsBusy(false);
             agent.get_curr_fruit().setIsStillFood(false);
-            arena.setPokemons(game.getPokemons());
-            whereShouldIGo(agent);
-            game.chooseNextEdge(agent.getID(), this.currIterator.next().getKey());
+            whereShouldIGo();
+            if(iterator<this._currPath.size()) {
+                nextNode = this._currPath.get(iterator).getKey();
+                game.chooseNextEdge(agent.getID(), nextNode);
+                this.iterator++;
+                System.out.println("agent :" + agent.getID() + " moved from: " + agent.getSrcNode()
+                        + " to: " + nextNode);
+                isTherePokemonInThisEdge(agent.getSrcNode(), nextNode);
 
+            }
         }
     }
       private void isTherePokemonInThisEdge(int src, int dest){
           edge_data currEdge=graphAlgo.getGraph().getEdge(src,dest);
-          for(CL_Pokemon currP: arena.getPokemons()){
-              if(currP.get_edge()==currEdge) {
-                  currP.setIsStillFood(false);
+          for(CL_Pokemon currP: arena.getPokemons()) {
+              if (currP != this.agent.get_curr_fruit()) {
+                  if (currP.get_edge() == currEdge) {
+                      currP.setIsStillFood(false);
+                      currP.setIsBusy(false);
+                  }
               }
           }
       }
-    private double timeToGetToPokemon(CL_Pokemon pokemon, CL_Agent agent){
+     private void strike() {
+         if (repeat.get(0) == repeat.get(2) && repeat.get(2) == repeat.get(4))
+             if (repeat.get(1) == repeat.get(3) && repeat.get(3) == repeat.get(5)){
+                 whereShouldIGo();
+                 int next=this._currPath.get(iterator).getKey();
+                 game.chooseNextEdge(agent.getID(),next);
+                 }
+         this.repeat=new ArrayList<>();
+     }
+
+    private double timeToGetToPokemon(CL_Pokemon pokemon){
         double weights = this.distanceArr[agent.getSrcNode()][pokemon.get_edge().getSrc()];
         if (weights == -1) return -1;
             weights += pokemon.get_edge().getWeight();
             return weights / agent.getSpeed();
     }
-    private double value(CL_Pokemon pokemon,CL_Agent agent){
-        double time= timeToGetToPokemon(pokemon,agent);
+    private double value(CL_Pokemon pokemon){
+        double time= timeToGetToPokemon(pokemon);
             return time /pokemon.getValue();
     }
-    private void whereShouldIGo(CL_Agent agent){
+
+    private void whereShouldIGo(){
+        arena.setPokemons(game.getPokemons());
         ArrayList<CL_Pokemon> pokemons=arena.getPokemons();
-        CL_Pokemon min=pokemons.get(0);
+        CL_Pokemon min =null;
         double tempSDT;
         double minSDT=Double.MAX_VALUE;
         for (CL_Pokemon pokemon : pokemons) {
             if (!pokemon.isBusy()) {//check if the pokimon is busy
-                tempSDT = value(pokemon, agent);
+                tempSDT = value(pokemon);
                 if ((tempSDT < minSDT) && tempSDT >= 0) {
                     min = pokemon;
                     minSDT = tempSDT;
                 }
             }
         }
-        agent.set_curr_fruit(min);
-        min.setIsBusy(true);
-        min.setIsStillFood(true);
-        this.currPath=this.pathes[agent.getSrcNode()][min.get_edge().getSrc()];
-        this.currPath.add(arena.getGraph().getNode(min.get_edge().getDest()));
-        this.currIterator=this.currPath.listIterator();
+        if(min!=null) {
+            agent.set_curr_fruit(min);
+            min.setIsBusy(true);
+            min.setIsStillFood(true);
+            updateAgent(game.getAgents());
+            this._currPath=new ArrayList<>(this.pathes[agent.getSrcNode()][min.get_edge().getSrc()]);
+            this._currPath.add(arena.getGraph().getNode(min.get_edge().getDest()));
+            this.iterator=1;
+        }
+        else{
+            this._currPath=new ArrayList<>();
+        }
     }
 
     private void updateAgent(String json) {

@@ -2,8 +2,6 @@ package gameClient;
 import Server.Game_Server_Ex2;
 import api.DWGraph_Algo;
 import api.game_service;
-
-
 import javax.swing.*;
 import java.util.List;
 
@@ -13,33 +11,61 @@ public class Ex2 implements Runnable {
     private static MyJFrame _win;
     private double [][] distance;
     private List[][] path;
-    private int level;
-    private int id;
+    private static int _level;
+    private static int _id;
     MyLoginPage entrancePage;
+    private static boolean cmdInput;
 
     public static void main(String[] args) {
         Thread main = new Thread(new Ex2());
+
+        if((args.length==0)||(args.length==1))
+            cmdInput=false;
+        else{
+            String id=args[0];
+            String level=args[1];
+            if(id.length()>10||level.length()>10)
+            {
+               cmdInput=false;//not entered integer
+            }
+            if(level.length()==0)
+            {
+                cmdInput=false;//level number required
+            }
+            boolean IdIsNumeric = id.chars().allMatch( Character::isDigit );
+            boolean LevelIsNumeric=level.chars().allMatch(Character::isDigit);
+            if(LevelIsNumeric&&IdIsNumeric){//check if id and level are numbers
+                _id=Integer.parseInt(id);
+                _level=Integer.parseInt(level);
+                cmdInput= _level >= 0 && _level <= 23;
+            }
+        }
+        if(!cmdInput &&(args.length!=0) )
+            System.out.println("invalid input, going to the Entrance Page");
+        if(cmdInput)
+            System.out.println("Starting Game!");
         main.start();
     }
 
-
     @Override
     public void run() {
-        entrancePage();
-        game_service game = Game_Server_Ex2.getServer(this.level);
-        if(this.id!=-1)
-            game.login(this.id);
+        if(!cmdInput)
+            entrancePage();
+        game_service game = Game_Server_Ex2.getServer(_level);
+        if(_id!=-1)
+            game.login(_id);
         init(game);
         Thread[] arrThreadOfAgents = new Thread[this.arena.getNumberOfAgents()];
+        game.startGame();
         for (int i = 0; i < arrThreadOfAgents.length; i++) {
             arrThreadOfAgents[i] = new Thread(new threadAgents(this.path,this.distance, this.graphAlgo, arena, arena.getAgents().get(i), game));
         }
         for (Thread arrThreadOfAgent : arrThreadOfAgents) arrThreadOfAgent.start();
-        Thread move = new Thread(new moveMethod(arena, game));
-        move.start();
-        long dt =30;
+        game.move();
+        long dt =100;
         while (game.isRunning()) {
             try {
+                    game.move();
                    _win.repaint();
                     Thread.sleep(dt);
                     arena.updateInfo(game.toString(), (int) (game.timeToEnd()/1000));
@@ -51,19 +77,15 @@ public class Ex2 implements Runnable {
         System.exit(0);
     }
 
-
-
-
-
     public void entrancePage(){
         this.entrancePage=new MyLoginPage();
         while(!this.entrancePage.get_user_successfully_connected()){
             System.out.print("");
         }
         System.out.println("starting game...");
-        this.level=entrancePage.getLevel_num();
-        this.id=entrancePage.getId_num();
-        if(!entrancePage.get_user_entered_id()) this.id=-1;
+        _level=entrancePage.getLevel_num();
+        _id=entrancePage.getId_num();
+        if(!entrancePage.get_user_entered_id()) _id=-1;
         entrancePage.setVisible(false);
     }
 
@@ -75,17 +97,10 @@ public class Ex2 implements Runnable {
         distnaceArr();
         this.arena.setPokemons(game.getPokemons());
         this.arena.setNumberOfAgents(game.toString());
-        int[] ArrayAgents = new int[this.arena.getNumberOfAgents()];
-        int j = 0;
-        while (ArrayAgents.length != j) {
-            CL_Pokemon MinPok = PokemonToRun();
-            game.addAgent(MinPok.get_edge().getSrc());//init the Agent.
-            ArrayAgents[j] = MinPok.get_edge().getDest();
-            game.chooseNextEdge(j, ArrayAgents[j]);//start to move
-            j++;
+        for(CL_Pokemon pokemon: arena.getPokemons()) {
+            game.addAgent(pokemon.get_edge().getSrc());
         }
         this.arena.setAgents(Arena.getAgents(game.getAgents(), arena.getGraph()));
-        //
         _win = new MyJFrame("Pokemon Game",arena);
         _win.setSize(800, 600);
         MyPanel panel=new MyPanel(arena);
@@ -93,29 +108,8 @@ public class Ex2 implements Runnable {
         _win.show();
         _win.setTitle("Catch me if U can!");
         _win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //
         arena.setInfo(game.toString());
-        game.startGame();
-        game.move();
     }
-
-
-    public CL_Pokemon PokemonToRun() {
-        List<CL_Pokemon> PokemonsList;
-        PokemonsList = this.arena.getPokemons();
-        CL_Pokemon TakeThisPokemon = PokemonsList.get(0);
-        int i = 1;
-        while (PokemonsList.size() != i) {//run over all the Pokemons and find the worthwhile Pokemon to run.
-            if (!PokemonsList.get(i).isBusy()) {//if the Pokemon isn't busy ,check if he worthwhile for the agent.
-                if (PokemonsList.get(i).get_edge().getWeight() / PokemonsList.get(i).getValue() < TakeThisPokemon.get_edge().getWeight() / TakeThisPokemon.getValue())
-                    TakeThisPokemon = PokemonsList.get(i);
-            }
-            i++;
-        }
-        TakeThisPokemon.setIsBusy(true);//update that this Pokemon is busy now.
-        return TakeThisPokemon;//return where to init the Agent.
-    }
-
     private void distnaceArr(){
         int nodeSize=graphAlgo.getGraph().nodeSize();
         pathArr(nodeSize);
@@ -127,7 +121,6 @@ public class Ex2 implements Runnable {
         if(!graphAlgo.isConnected()) not_a_trap();
     }
     private void not_a_trap(){
-
         int nodeSize=graphAlgo.getGraph().nodeSize();
         for(int i=0;i<nodeSize;i++)
             for(int j=0;j<nodeSize;j++)

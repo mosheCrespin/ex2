@@ -10,13 +10,6 @@ public class NodeData implements node_data{
     private double weight;
     private geo_location Location;
 
-    //constructor
-//    public NodeData(){
-//        this.id=id_maker;
-//        this.info="";
-//        this.Location=new geoLocation(0,0,0);
-//        id_maker++;
-//    }
 
     /**
      * This method Allows to do deep copy constructor

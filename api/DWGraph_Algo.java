@@ -15,11 +15,14 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
     private directed_weighted_graph myGraph;
 
+    /**
+     * init the class's graph.
+     */
     public DWGraph_Algo() {
         this.myGraph = new DWGraph_DS();
     }
     /**
-     * Init the graph on which this set of algorithms operates on.
+     * Init the graph on which this set of algorithms operates on with given graph g.
      * @param g
      */
     public void init(directed_weighted_graph g) {
@@ -27,15 +30,15 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     }
     /**
      * Return the graph this class works.
-     * @return
+     * @return myGraph
      */
     public directed_weighted_graph getGraph() {
         return myGraph;
     }
     /**
-     * Compute a deep copy of this weighted graph.
-     * This method make a new graph cald 'copiedGraph' and do deep copy for all the nodes of the graph  we want to copy from. after copy all the nodes
-     * the method do a deep copy all the edges from the graph we want to copy to the new grapd-'copiedGraph'.
+     * Do a deep copy of this weighted graph.
+     * This method make a new graph call 'copiedGraph' and do deep copy from the graph on which this set of algorithms
+     * operates on and copy all the nodes,and all the edges.
      * @return copiedGraph
      */
     public directed_weighted_graph copy() {
@@ -51,6 +54,13 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         return copiedGraph;
     }
 
+    /**
+     * Do a deep copy of this weighted graph but the edges he copy in reverse .
+     * This method make a new graph call 'copiedGraph' and do deep copy from the graph on which this set of algorithms
+     * operates on and copy all the nodes,and all the edges in reverse.
+     * @return copiedGraph
+     */
+
     private  synchronized directed_weighted_graph  deepCopyOppositGraph() {
         directed_weighted_graph copiedGraph = new DWGraph_DS();
         node_data temp;
@@ -64,24 +74,33 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         return copiedGraph;
     }
 
+    /**
+     * this method run over all the nodes and update there tag to -1.
+     * @param g
+     */
     private void initTags(directed_weighted_graph g) {
         for (node_data curr : g.getV()) {
             curr.setTag(-1);
         }
     }
-    private void initWeight(){
+
+    /**
+     * this method run over all the nodes and init there weight to -1.
+     */
+    private void initWeight(directed_weighted_graph g){
         for(node_data curr: myGraph.getV()){
             curr.setWeight(-1);
         }
     }
 
     /**
-     * this method check if this graph is connected using BFS algorithm
-     * running time is O(V+E)
+     * this method check if this graph is connected using BFS algorithm if so, the method check also if the deepCopyOppositGraph()
+     *is connected if true return true else false.
+     * running time is O(V+E)//todo
      * @return true if the graph is connected, `false` otherwise
      */
 
-    public synchronized  boolean isConnected() {
+    public  boolean isConnected() {
         directed_weighted_graph graphPointer = myGraph;
         int Node_size = graphPointer.nodeSize();
         if (Node_size < 2)//if the number of nodes is less than 2 the graph is connected
@@ -121,6 +140,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         //if the number of the seen vertices is equal to nodeSize than the graph is connected
         return counters[1] == myGraph.nodeSize();//we already checked counters[0]
     }
+
     /**
      * this method get 2 nodes and calculate the shortest path between them.
      * if there is a path than the method returns the sum of the weights of the shortest path
@@ -130,9 +150,10 @@ public class DWGraph_Algo implements dw_graph_algorithms {
      * running time is O(logV(V+E))
      * @param src - start node
      * @param dest - end (target) node
-     * @return
+     * @return the distance
      */
-    public synchronized double shortestPathDist(int src, int dest) {
+    public  double shortestPathDist(int src, int dest) {
+
         HashMap<node_data, Double> distances = new HashMap<>();
         Queue<node_data> q = new PriorityQueue<>(Comparator.comparingDouble(distances::get));
         initTags(myGraph);//init all the tags to -1
@@ -173,6 +194,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         }
         return distances.get(myGraph.getNode(dest));
     }
+
     /**
      * this method get 2 nodes and calculate the shortest path between them.
      * if there is a path than the method returns the the actual path using List</node_info>
@@ -185,7 +207,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
      * @param dest - end (target) node
      * @return list with the actual path
      */
-    public synchronized List<node_data> shortestPath(int src, int dest) {
+    public  List<node_data> shortestPath(int src, int dest) {
         HashMap<node_data, Double> distances = new HashMap<>();
         Queue<node_data> q = new PriorityQueue<>(Comparator.comparingDouble(distances::get));
         HashMap<node_data, node_data> father = new HashMap<>();//this hashmap is using to recover the path
@@ -236,7 +258,6 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     /**
      * this method makes a conversion from HashMap that holds a path, to a List of nodes
      * running time is O(k) while k is the number of the nodes in the path
-     *
      * @param father the HashMap who holds the path
      * @param dest   the key of the dest node
      * @return a list of the path
@@ -287,23 +308,28 @@ public class DWGraph_Algo implements dw_graph_algorithms {
             builder.registerTypeAdapter(directed_weighted_graph.class, new graphJsonDeserializer());
             Gson gson = builder.create();
             FileReader reader = new FileReader(file);
-            directed_weighted_graph graph=gson.fromJson(reader,directed_weighted_graph.class);
-            System.out.println(graph);
-            if(graph.equals(this.myGraph))
-                this.myGraph=graph;
-
+            directed_weighted_graph graph = gson.fromJson(reader, directed_weighted_graph.class);
+            if (graph != null)
+                this.myGraph = graph;
             else return false;
-        }catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
             return false;
         }
-
         return true;
     }
 
 
     private class graphJsonDeserializer implements JsonDeserializer<directed_weighted_graph>{
-
+        /**
+         * This method get JsonElements and init g0 graph with the values that write in the jsonElements this action call deserialize
+         * the method return the g0 graph with all the values about the nodes and edges.
+         * @param jsonElement
+         * @param type
+         * @param jsonDeserializationContext
+         * @return g0
+         * @throws JsonParseException
+         */
         @Override
         public directed_weighted_graph deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
             JsonObject jsonObject = jsonElement.getAsJsonObject();

@@ -38,11 +38,12 @@ public class MyPanel extends JPanel {
         this.infoB.setOpaque(true);
         this.add(this.infoA);
         this.add(this.infoB);
+
         try {
-            this.backGround= ImageIO.read(new File("BackGround.jpg"));//TODO should add path
-            this.boaz=ImageIO.read(new File("boaz.png"));
-            this.ishay=ImageIO.read(new File("ishay.png"));
-            this.moshe=ImageIO.read(new File("moshe.png"));
+            this.backGround= ImageIO.read(new File("src\\data\\BackGround.jpg"));
+            this.boaz=ImageIO.read(new File("src\\data\\boaz.png"));
+            this.ishay=ImageIO.read(new File("src\\data\\ishay.png"));
+            this.moshe=ImageIO.read(new File("src\\data\\moshe.png"));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -104,7 +105,9 @@ public class MyPanel extends JPanel {
                 g.drawImage(this.moshe,(int) fp.x(),(int) fp.y()-2,30,30,null);
             else g.drawImage(this.ishay,(int) fp.x(),(int) fp.y()-2,30,30,null);
             g.setColor(Color.BLACK);
-            String str= Double.toString(agent.get_curr_fruit().getId()).substring(0, Double.toString(agent.get_curr_fruit().getId()).indexOf('.')+1);
+            String str="";
+            if(agent.get_curr_fruit()!=null)
+                 str= Double.toString(agent.get_curr_fruit().getId()).substring(0, Double.toString(agent.get_curr_fruit().getId()).indexOf('.')+1);
             g.drawString("to: " + str, (int) fp.x(), (int) fp.y() - 2 * r);
             i++;
         }

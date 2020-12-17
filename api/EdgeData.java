@@ -6,6 +6,15 @@ public class EdgeData implements edge_data{
     private double weight;
     private String info;
     private int tag;
+
+    /**
+     * constructor for the EdgeData that get src,dest,weight,info and tag.
+     * @param src
+     * @param dest
+     * @param weight
+     * @param info
+     * @param tag
+     */
     public EdgeData(int src,int dest,double weight,String info,int tag){
         this.src=src;
         this.dest=dest;
@@ -13,6 +22,13 @@ public class EdgeData implements edge_data{
         this.info=info;
         this.tag=tag;
     }
+
+    /**
+     * constructor for the EdgeData that get src,dest and weight.
+     * @param src
+     * @param dest
+     * @param weight
+     */
     public EdgeData(int src,int dest,double weight){
         this.src=src;
         this.dest=dest;
@@ -72,7 +88,7 @@ public class EdgeData implements edge_data{
     }
 
     /**
-     * This method
+     *
      * @return
      */
     public String toString(){
