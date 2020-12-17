@@ -10,7 +10,7 @@ public class DWGraph_DS implements directed_weighted_graph {
     private HashMap<Integer, HashMap<Integer, edge_data>> My_graph_edges;//src-->dest
     private transient HashMap<Integer, HashSet<Integer>> pointersToDest;//dest-->src
 
-        //constructor
+    //constructor
     public DWGraph_DS() {
         this.My_graph_edges = new HashMap<>();
         this.pointersToDest = new HashMap<>();
@@ -25,7 +25,7 @@ public class DWGraph_DS implements directed_weighted_graph {
     }
 
     private HashMap<Integer,edge_data> getNi(int src){
-            return My_graph_edges.get(src);
+        return My_graph_edges.get(src);
     }
 
 
@@ -33,15 +33,16 @@ public class DWGraph_DS implements directed_weighted_graph {
         if (getNi(src) == null) return null;//src does not exist;
         return getNi(src).get(dest);
     }
-        public void addNode(node_data n) {
-            //if the node doesn't exist ,make a new node and add him to the graph.
-            if (!myGraph.containsKey(n.getKey())) {
-                myGraph.put(n.getKey(), n);
-                My_graph_edges.put(n.getKey(), new HashMap<>());
-                pointersToDest.put(n.getKey(), new HashSet<>());
-                numberOfNodes++;
-                }
-            }
+    public void addNode(node_data n) {
+        //if the node doesn't exist ,make a new node and add him to the graph.
+        if (!myGraph.containsKey(n.getKey())) {
+            myGraph.put(n.getKey(), n);
+            My_graph_edges.put(n.getKey(), new HashMap<>());
+            pointersToDest.put(n.getKey(), new HashSet<>());
+            numberOfNodes++;
+            amountOfChanges++;
+        }
+    }
 
 
     public void connect(int src, int dest, double w) {
@@ -88,15 +89,15 @@ public class DWGraph_DS implements directed_weighted_graph {
         //if there is a edge between the nodes.
         if (getNode(src)==null||getNode(dest)==null) return null;
         if(!getNi(src).containsKey(dest)) return null;
-            //save the edge data before delete.
-            edge_data ReturnEdge = getNi(src).get(dest);
-            //delete the edge from the 2 hashmaps.
+        //save the edge data before delete.
+        edge_data ReturnEdge = getNi(src).get(dest);
+        //delete the edge from the 2 hashmaps.
         My_graph_edges.get(src).remove(dest);
         pointersToDest.get(dest).remove(src);
-            //apply changes
-            numberOfEdges--;
-            amountOfChanges++;
-            return ReturnEdge;
+        //apply changes
+        numberOfEdges--;
+        amountOfChanges++;
+        return ReturnEdge;
 
     }
 
@@ -128,21 +129,19 @@ public class DWGraph_DS implements directed_weighted_graph {
                         flag = false;
         }
 
-            return flag;
+        return flag;
 
     }
 
-        public String toString(){
-            StringBuilder str = new StringBuilder();
-            for (node_data curr : myGraph.values()) {
-                str.append(curr.getKey()).append("->\n");
-                for (edge_data currNi : getNi(curr.getKey()).values())
-                    str.append(" ").append(currNi.toString());
-                str.append("____________________________________________ \n");
-            }
-            return str + "\n" + "nodes " + numberOfNodes + ", edges: " + numberOfEdges + ", changes: " + getMC();
+    public String toString(){
+        StringBuilder str = new StringBuilder();
+        for (node_data curr : myGraph.values()) {
+            str.append(curr.getKey()).append("->\n");
+            for (edge_data currNi : getNi(curr.getKey()).values())
+                str.append(" ").append(currNi.toString());
+            str.append("________________ \n");
         }
-
+        return str + "\n" + "nodes " + numberOfNodes + ", edges: " + numberOfEdges + ", changes: " + getMC();
     }
 
-
+}
