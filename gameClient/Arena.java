@@ -40,6 +40,8 @@ public class Arena{
 			updateEdge(curr,this._gg);
 		}
 	}
+
+
 	public void setNumberOfAgents(String json){
 			try {
 				JSONObject ttt = new JSONObject(json);
@@ -74,6 +76,9 @@ public class Arena{
 		public synchronized ArrayList<Integer> getInfo () {
 		return _info;
 	}
+
+
+
 		public synchronized void updateInfo(String json, int timeLeft ){
 		try {
 			JSONObject game = new JSONObject(json);

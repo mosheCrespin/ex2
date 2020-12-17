@@ -18,15 +18,26 @@ public class DWGraph_Algo implements dw_graph_algorithms {
     public DWGraph_Algo() {
         this.myGraph = new DWGraph_DS();
     }
-
+    /**
+     * Init the graph on which this set of algorithms operates on.
+     * @param g
+     */
     public void init(directed_weighted_graph g) {
         this.myGraph = g;
     }
-
+    /**
+     * Return the graph this class works.
+     * @return
+     */
     public directed_weighted_graph getGraph() {
         return myGraph;
     }
-
+    /**
+     * Compute a deep copy of this weighted graph.
+     * This method make a new graph cald 'copiedGraph' and do deep copy for all the nodes of the graph  we want to copy from. after copy all the nodes
+     * the method do a deep copy all the edges from the graph we want to copy to the new grapd-'copiedGraph'.
+     * @return copiedGraph
+     */
     public directed_weighted_graph copy() {
         directed_weighted_graph copiedGraph = new DWGraph_DS();
         node_data temp;
@@ -64,7 +75,11 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         }
     }
 
-
+    /**
+     * this method check if this graph is connected using BFS algorithm
+     * running time is O(V+E)
+     * @return true if the graph is connected, `false` otherwise
+     */
 
     public synchronized  boolean isConnected() {
         directed_weighted_graph graphPointer = myGraph;
@@ -106,7 +121,17 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         //if the number of the seen vertices is equal to nodeSize than the graph is connected
         return counters[1] == myGraph.nodeSize();//we already checked counters[0]
     }
-
+    /**
+     * this method get 2 nodes and calculate the shortest path between them.
+     * if there is a path than the method returns the sum of the weights of the shortest path
+     * if there is no path or if one of the nodes does not exist in the graph, than returns -1.
+     * if src==dest than returns 0
+     * this method using Dijkstra algorithm
+     * running time is O(logV(V+E))
+     * @param src - start node
+     * @param dest - end (target) node
+     * @return
+     */
     public synchronized double shortestPathDist(int src, int dest) {
         HashMap<node_data, Double> distances = new HashMap<>();
         Queue<node_data> q = new PriorityQueue<>(Comparator.comparingDouble(distances::get));
@@ -148,7 +173,18 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         }
         return distances.get(myGraph.getNode(dest));
     }
-
+    /**
+     * this method get 2 nodes and calculate the shortest path between them.
+     * if there is a path than the method returns the the actual path using List</node_info>
+     * if there is no path then the method returns an empty list.
+     * if one of the nodes does not exist in the graph, than returns null.
+     * if src==dest than returns a list with only the src node
+     * this method using Dijkstra algorithm
+     * running time is O(logV(V+E))
+     * @param src - start node
+     * @param dest - end (target) node
+     * @return list with the actual path
+     */
     public synchronized List<node_data> shortestPath(int src, int dest) {
         HashMap<node_data, Double> distances = new HashMap<>();
         Queue<node_data> q = new PriorityQueue<>(Comparator.comparingDouble(distances::get));
@@ -217,7 +253,12 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         return ans;
     }
 
-
+    /**
+     * Saves this weighted (directed) graph to the given
+     * file name - in JSON format
+     * @param file - the file name (may include a relative path).
+     * @return true - iff the file was successfully saved
+     */
     public boolean save(String file) {
         Gson gson= new GsonBuilder().setPrettyPrinting().create();
         String json = gson.toJson(this.myGraph);
@@ -232,7 +273,14 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         }
         return true;
     }
-
+    /**
+     * This method load a graph to this graph algorithm.
+     * if the file was successfully loaded - the underlying graph
+     * of this class will be changed (to the loaded one), in case the
+     * graph was not loaded the original graph should remain "as is".
+     * @param file - file name of JSON file
+     * @return true - iff the graph was successfully loaded.
+     */
     public boolean load(String file) {
         try {
             GsonBuilder builder = new GsonBuilder();

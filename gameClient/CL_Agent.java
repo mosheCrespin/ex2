@@ -80,7 +80,7 @@ public class CL_Agent {
 			return ans;	
 		}
 		private void setMoney(double v) {_value = v;}
-	
+
 		public boolean setNextNode(int dest) {
 			boolean ans = false;
 			int src = this._curr_node.getKey();
@@ -114,7 +114,7 @@ public class CL_Agent {
 			return _pos;
 		}
 
-		
+
 		public double getValue() {
 			// TODO Auto-generated method stub
 			return this._value;

@@ -19,13 +19,29 @@ public class geoLocation implements geo_location {
         this.z=_z;
     }
     //getters
+
+    /**
+     * Returns the location on the X-axis.
+     * @return
+     */
     public double x() {
         return this.x;
     }
+
+
+    /**
+     * Returns the location on the y-axis.
+     * @return
+     */
     public double y() {
         return this.y;
     }
 
+
+    /**
+     * Returns the location on the z-axis.
+     * @return
+     */
     public double z() {
         return this.z;
     }
@@ -33,7 +49,7 @@ public class geoLocation implements geo_location {
     /**
      * this method calculate the distance from this location to the given geo_location
      * @param g
-     * @return
+     * @return the distance between the locations.
      */
     public double distance(geo_location g) {
         Point3D temp=new Point3D(this.x,this.y,this.z);
