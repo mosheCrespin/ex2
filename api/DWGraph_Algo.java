@@ -66,7 +66,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
 
 
-    public synchronized  boolean isConnected() {
+    public  boolean isConnected() {
         directed_weighted_graph graphPointer = myGraph;
         int Node_size = graphPointer.nodeSize();
         if (Node_size < 2)//if the number of nodes is less than 2 the graph is connected
@@ -107,7 +107,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         return counters[1] == myGraph.nodeSize();//we already checked counters[0]
     }
 
-    public synchronized double shortestPathDist(int src, int dest) {
+    public  double shortestPathDist(int src, int dest) {
         HashMap<node_data, Double> distances = new HashMap<>();
         Queue<node_data> q = new PriorityQueue<>(Comparator.comparingDouble(distances::get));
         initTags(myGraph);//init all the tags to -1
@@ -149,7 +149,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
         return distances.get(myGraph.getNode(dest));
     }
 
-    public synchronized List<node_data> shortestPath(int src, int dest) {
+    public  List<node_data> shortestPath(int src, int dest) {
         HashMap<node_data, Double> distances = new HashMap<>();
         Queue<node_data> q = new PriorityQueue<>(Comparator.comparingDouble(distances::get));
         HashMap<node_data, node_data> father = new HashMap<>();//this hashmap is using to recover the path
