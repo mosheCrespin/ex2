@@ -21,23 +21,22 @@ public class Ex2 implements Runnable {
 
         if((args.length==0)||(args.length==1))
             cmdInput=false;
-        else{
-            String id=args[0];
-            String level=args[1];
-            if(id.length()>10||level.length()>10)
-            {
-               cmdInput=false;//not entered integer
-            }
-            if(level.length()==0)
-            {
-                cmdInput=false;//level number required
-            }
-            boolean IdIsNumeric = id.chars().allMatch( Character::isDigit );
-            boolean LevelIsNumeric=level.chars().allMatch(Character::isDigit);
-            if(LevelIsNumeric&&IdIsNumeric){//check if id and level are numbers
-                _id=Integer.parseInt(id);
-                _level=Integer.parseInt(level);
-                cmdInput= _level >= 0 && _level <= 23;
+        else {
+            String id = args[0];
+            String level = args[1];
+            if (id.length() > 10 || level.length() > 10) {
+                cmdInput = false;//not entered integer
+            } else {
+                if (level.length() == 0) {
+                    cmdInput = false;//level number required
+                }
+                boolean IdIsNumeric = id.chars().allMatch(Character::isDigit);
+                boolean LevelIsNumeric = level.chars().allMatch(Character::isDigit);
+                if (LevelIsNumeric && IdIsNumeric) {//check if id and level are numbers
+                    _id = Integer.parseInt(id);
+                    _level = Integer.parseInt(level);
+                    cmdInput = _level >= 0 && _level <= 23;
+                }
             }
         }
         if(!cmdInput &&(args.length!=0) )
@@ -58,7 +57,7 @@ public class Ex2 implements Runnable {
         Thread[] arrThreadOfAgents = new Thread[this.arena.getNumberOfAgents()];
         game.startGame();
         for (int i = 0; i < arrThreadOfAgents.length; i++) {
-            arrThreadOfAgents[i] = new Thread(new threadAgents(this.path,this.distance, this.graphAlgo, arena, arena.getAgents().get(i), game));
+            arrThreadOfAgents[i] = new Thread(new AgentsManaging(this.path,this.distance, this.graphAlgo, arena, arena.getAgents().get(i), game));
         }
         for (Thread arrThreadOfAgent : arrThreadOfAgents) arrThreadOfAgent.start();
         game.move();
@@ -105,7 +104,8 @@ public class Ex2 implements Runnable {
         _win.setSize(800, 600);
         MyPanel panel=new MyPanel(arena);
         _win.add(panel);
-        _win.show();
+
+        _win.setVisible(true);
         _win.setTitle("Catch me if U can!");
         _win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         arena.setInfo(game.toString());

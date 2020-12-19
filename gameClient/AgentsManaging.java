@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class threadAgents implements Runnable{
+public class AgentsManaging implements Runnable{
     private final Arena arena;
     private final DWGraph_Algo graphAlgo;
     private CL_Agent agent;
@@ -23,7 +23,7 @@ public class threadAgents implements Runnable{
     private ArrayList<node_data> _currPath;
     private int iterator;
 
-    public threadAgents(List<node_data> [][]path ,double[][] distanceArr,DWGraph_Algo graph_algo,Arena arena,CL_Agent agent,game_service game){
+    public AgentsManaging(List<node_data> [][]path , double[][] distanceArr, DWGraph_Algo graph_algo, Arena arena, CL_Agent agent, game_service game){
         this.arena=arena;
         this.graphAlgo=graph_algo;
         this.agent=agent;
@@ -68,7 +68,6 @@ public class threadAgents implements Runnable{
                 System.out.println("agent :" + agent.getID() + " moved from: " + agent.getSrcNode()
                         + " to: " + nextNode);
                 isTherePokemonInThisEdge(agent.getSrcNode(), nextNode);
-
             }
         }
     }
