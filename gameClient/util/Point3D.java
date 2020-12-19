@@ -34,7 +34,7 @@ public class Point3D implements geo_location, Serializable{
             _z = Double.parseDouble(a[2]);
         }
         catch(IllegalArgumentException e) {
-            System.err.println("ERR: got wrong format string for POint3D init, got:"+s+"  should be of format: x,y,x");
+            System.err.println("ERR: got wrong format string for Point3D init, got:"+s+"  should be of format: x,y,x");
             throw(e);
         }
     }
@@ -61,10 +61,6 @@ public class Point3D implements geo_location, Serializable{
         Point3D p2 = (Point3D)p;
         return ( (_x==p2._x) && (_y==p2._y) && (_z==p2._z) );
     }
-    public boolean close2equals(geo_location p2) {
-        return ( this.distance(p2) < EPS ); }
-    public boolean equalsXY (Point3D p)
-    {return p._x == _x && p._y == _y;}
 
      public String toString(boolean all) {
         if(all) return "[" + _x + "," +_y+","+_z+"]";
