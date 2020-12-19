@@ -19,6 +19,10 @@ public class MyLoginPage extends JFrame implements ActionListener , MouseListene
     int id_num;
     int level_num;
 
+    /**
+     * this method declare how the login page look. the size of the page the labels and where they will show
+     * the size the text will show..
+     */
     public MyLoginPage(){
         super();
         userSuccessfullyConnected =false;
@@ -54,7 +58,11 @@ public class MyLoginPage extends JFrame implements ActionListener , MouseListene
     }
 
 
-
+    /**
+     * this method check if the data the user give in the Labels is legal,
+     * if so he move to the game page else in the login show the reason why the data isn't legal.
+     * @param e
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         String id_str=this.textFieldForId.getText();
@@ -110,6 +118,10 @@ public class MyLoginPage extends JFrame implements ActionListener , MouseListene
     public void mouseClicked(MouseEvent e) {
     }
 
+    /**
+     * This method listen to the press the user press on the button
+     * @param e
+     */
     @Override
     public void mousePressed(MouseEvent e) {
         if(this.textFieldForId.getText().equals("Optional"))

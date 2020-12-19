@@ -182,6 +182,7 @@ public class DWGraph_DS implements directed_weighted_graph {
 
     /**
      * Returns the Mode Count - for testing changes in the graph.
+     * running time O(1)
      * @return 'amountOfChanges'.
      */
     public int getMC() {

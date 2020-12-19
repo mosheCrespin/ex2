@@ -19,6 +19,11 @@ public class CL_Agent {
 		private double _value;
 		private int dest;
 
+	/**
+	 * This constructor get graph and agent's start node.the method update the agent to the start node.
+	 * @param g
+	 * @param start_node
+	 */
 		public CL_Agent(directed_weighted_graph g, int start_node) {
 			_gg = g;
 			setMoney(0);
@@ -29,6 +34,11 @@ public class CL_Agent {
 			this.dest=-1;
 
 		}
+
+	/**
+	 * this method get json String and update the agents data like id,speed,pos,src,dest and value.
+	 * @param json
+	 */
 		public void update(String json) {
 			JSONObject line;
 			try {
@@ -88,12 +98,24 @@ public class CL_Agent {
 		public void setCurrNode(int src) {
 			this._curr_node = _gg.getNode(src);
 		}
+
+	/**
+	 * this method check if the agent moving now
+	 * if so the method return true else false.
+	 * @return ans
+	 */
 		public boolean isMoving() {
 			return (this.dest!=-1);
 		}
+
+	/**
+	 * this method call toJSON() method.
+	 * @return
+	 */
 		public String toString() {
 			return toJSON();
 		}
+
 		public String toString1() {
 			String ans=""+this.getID()+","+_pos+", "+isMoving()+","+this.getValue();	
 			return ans;

@@ -16,6 +16,13 @@ public class Ex2 implements Runnable {
     MyLoginPage entrancePage;
     private static boolean cmdInput;
 
+    /**
+     * this main() method get String form the user that keep the id and level that choose the user in the cmd page.
+     * this main() method check if the data in the String [] args about the id and level is correlate to the demand,if so
+     * the game start,else the login page will show.
+     * i
+     * @param args
+     */
     public static void main(String[] args) {
         Thread main = new Thread(new Ex2());
 
@@ -47,6 +54,11 @@ public class Ex2 implements Runnable {
         main.start();
     }
 
+    /**
+     * this method run all the time the game is playing, this method check if the agent doesn't have pokemon to
+     * eat so the method told him whice node to go for.
+     * 	to go.
+     */
     @Override
     public void run() {
         if(!cmdInput)
@@ -89,6 +101,12 @@ public class Ex2 implements Runnable {
         entrancePage.setVisible(false);
     }
 
+    /**
+     *this method init all the information about the game like arena ,setpokemons ,
+     * numberofagnts amd also make the frame for the login panel.
+     * @param game
+     */
+
     private void init(game_service game) {
         this.arena = new Arena();
         this.graphAlgo = new DWGraph_Algo();
@@ -110,6 +128,12 @@ public class Ex2 implements Runnable {
         _win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         arena.setInfo(game.toString());
     }
+
+    /**
+     *this method run over all the nodes in the graph and calculate the distance to all other nodes in the graph, this information
+     *keep in the distance array. if this graph isn't connected so call the not_a_trap() method.
+     * running time will take O(n*n*logV(V+E)).
+     */
     private void distnaceArr(){
         int nodeSize=graphAlgo.getGraph().nodeSize();
         pathArr(nodeSize);
@@ -120,6 +144,12 @@ public class Ex2 implements Runnable {
             }
         if(!graphAlgo.isConnected()) not_a_trap();
     }
+
+    /**
+     * this method run over all the nodes in the graph and check if there is a way to over from this node to the
+     * other nodes if no update the distance array with -1 ,distance[i][j] = -1 and also distance[j][i]=-1 .
+     * running time of this method is O(n*n).
+     */
     private void not_a_trap(){
         int nodeSize=graphAlgo.getGraph().nodeSize();
         for(int i=0;i<nodeSize;i++)
@@ -130,6 +160,13 @@ public class Ex2 implements Runnable {
                 }
 
     }
+
+    /**
+     * this method get number of nodes in the graph and update the array path[][] that contains the list nodes that need to over
+     * if the agent want to over from one node to another in te shortest way.
+     * running time is O(n*n*logV(V+E)).
+     * @param nodeSize
+     */
     private void pathArr(int nodeSize){
         this.path=new List[nodeSize][nodeSize];
         for(int i=0;i<nodeSize;i++)

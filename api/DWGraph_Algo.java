@@ -39,6 +39,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
      * Do a deep copy of this weighted graph.
      * This method make a new graph call 'copiedGraph' and do deep copy from the graph on which this set of algorithms
      * operates on and copy all the nodes,and all the edges.
+     * running time O(n*n)
      * @return copiedGraph
      */
     public directed_weighted_graph copy() {
@@ -58,6 +59,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
      * Do a deep copy of this weighted graph but the edges he copy in reverse .
      * This method make a new graph call 'copiedGraph' and do deep copy from the graph on which this set of algorithms
      * operates on and copy all the nodes,and all the edges in reverse.
+     * running time O(n*n)
      * @return copiedGraph
      */
 
@@ -76,6 +78,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
     /**
      * this method run over all the nodes and update there tag to -1.
+     * running time O(n)
      * @param g
      */
     private void initTags(directed_weighted_graph g) {
@@ -86,6 +89,7 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
     /**
      * this method run over all the nodes and init there weight to -1.
+     * running time O(n)
      */
     private void initWeight(directed_weighted_graph g){
         for(node_data curr: myGraph.getV()){

@@ -29,6 +29,11 @@ public class Arena{
 	private int numberOfAgents;
 
 	public Arena() {}
+
+	/**
+	 * This method get json String and update the edge data the pokemon shows on.
+	 * @param json
+	 */
 	public synchronized void setPokemons(String json) {
 		this._pokemons=json2Pokemons(json);
 		for(CL_Pokemon curr: this._pokemons)
@@ -37,7 +42,10 @@ public class Arena{
 		}
 	}
 
-
+	/**
+	 * This method get String json and init the numberOfAgents.
+	 * @param json
+	 */
 	public void setNumberOfAgents(String json){
 			try {
 				JSONObject ttt = new JSONObject(json);
@@ -48,7 +56,13 @@ public class Arena{
 				e.printStackTrace();
 			}
 		}
-		public synchronized void setInfo (String json){
+
+	/**
+	 * This method get String json and init the data about the game like how much pokemons,agents play in this game
+	 * the level of the game ,this information keep in ArrayList call info.
+	 * @param json
+	 */
+	public synchronized void setInfo (String json){
 		this._info = new ArrayList<>();
 		try {
 			JSONObject game = new JSONObject(json);
@@ -68,12 +82,17 @@ public class Arena{
 			e.printStackTrace();
 		}
 	}
+
 		public synchronized ArrayList<Integer> getInfo () {
 		return _info;
 	}
 
 
-
+	/**
+	 * This method get String json and timeLeft and update the information in _info ArrayList.
+	 * @param json
+	 * @param timeLeft
+	 */
 		public synchronized void updateInfo(String json, int timeLeft ){
 		try {
 			JSONObject game = new JSONObject(json);
@@ -87,6 +106,11 @@ public class Arena{
 			e.printStackTrace();
 		}
 	}
+
+	/**
+	 * this method return how much agents play in this game.
+	 * @return _agents
+	 */
 	public int getNumberOfAgents(){return this.numberOfAgents;}
 	public void setAgents(List<CL_Agent> f) {
 		this._agents = f;
@@ -99,6 +123,13 @@ public class Arena{
 		return _gg;
 	}
 	////////////////////////////////////////////////////
+
+	/**
+	 *this method get String and graph and return a list with the agents that play in this graph.
+	 * @param aa
+	 * @param gg
+	 * @return  List<CL_Agent>
+	 */
 	public static List<CL_Agent> getAgents(String aa, directed_weighted_graph gg) {
 		ArrayList<CL_Agent> ans = new ArrayList<CL_Agent>();
 		try {
@@ -114,6 +145,10 @@ public class Arena{
 		}
 		return ans;
 	}
+	/**
+	 * this method get a json String and update the data of the pokemons, keep the pokemons in a
+	 * ArrayList and return the ArrayList after the method end .
+	 */
 	public static ArrayList<CL_Pokemon> json2Pokemons(String fs) {
 		ArrayList<CL_Pokemon> ans = new  ArrayList<CL_Pokemon>();
 		try {
@@ -134,6 +169,7 @@ public class Arena{
 		catch (JSONException e) {e.printStackTrace();}
 		return ans;
 	}
+
 	public static void updateEdge(CL_Pokemon fr, directed_weighted_graph g) {
 		for (node_data v : g.getV()) {
 			for (edge_data e : g.getE(v.getKey())) {

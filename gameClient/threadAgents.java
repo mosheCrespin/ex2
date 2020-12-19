@@ -23,6 +23,15 @@ public class threadAgents implements Runnable{
     private ArrayList<node_data> _currPath;
     private int iterator;
 
+    /**
+     * constructor for agents that get the data about the agents and keep it.
+     * @param path
+     * @param distanceArr
+     * @param graph_algo
+     * @param arena
+     * @param agent
+     * @param game
+     */
     public threadAgents(List<node_data> [][]path ,double[][] distanceArr,DWGraph_Algo graph_algo,Arena arena,CL_Agent agent,game_service game){
         this.arena=arena;
         this.graphAlgo=graph_algo;
@@ -33,6 +42,10 @@ public class threadAgents implements Runnable{
         this.repeat=new ArrayList<>();
     }
 
+    /**
+     ** this method run all the time the game is running and check for
+     * the agents where to go to eat pokemons.
+     */
     @Override
     public void run() {
         int nextNode;
@@ -72,6 +85,13 @@ public class threadAgents implements Runnable{
             }
         }
     }
+//TODO
+    /**
+     * this method get src and dest  run over all the pokemons in the graph and check if
+     * there is a pokemon between the src and the dest.if so this pokemon become   .
+     * @param src
+     * @param dest
+     */
       private void isTherePokemonInThisEdge(int src, int dest){
           edge_data currEdge=graphAlgo.getGraph().getEdge(src,dest);
           for(CL_Pokemon currP: arena.getPokemons()) {
@@ -83,6 +103,7 @@ public class threadAgents implements Runnable{
               }
           }
       }
+
      private void strike() {
          if (repeat.get(0) == repeat.get(2) && repeat.get(2) == repeat.get(4))
              if (repeat.get(1) == repeat.get(3) && repeat.get(3) == repeat.get(5)){
@@ -93,17 +114,34 @@ public class threadAgents implements Runnable{
          this.repeat=new ArrayList<>();
      }
 
+    /**
+     * this method calculate how much time it's take to the agent to eat the pokemon.
+     * this calculate by the weights / agent.getSpeed().
+     * @param pokemon
+     * @return
+     */
     private double timeToGetToPokemon(CL_Pokemon pokemon){
         double weights = this.distanceArr[agent.getSrcNode()][pokemon.get_edge().getSrc()];
         if (weights == -1) return -1;
             weights += pokemon.get_edge().getWeight();
             return weights / agent.getSpeed();
     }
+
+    /**
+     * this method return the value the pokemon equal by the time it's will take to the agents to get the pokemon divide
+     * the pokemon's value.
+     * @param pokemon
+     * @return
+     */
     private double value(CL_Pokemon pokemon){
         double time= timeToGetToPokemon(pokemon);
             return time /pokemon.getValue();
     }
 
+    /**
+     * the 'whereShouldIGo()' method run over all the pokemons that existent in this moment and check
+     * whice of them is closest and also free.the method say to the agent to go to the this pokemon.
+     */
     private void whereShouldIGo(){
         arena.setPokemons(game.getPokemons());
         ArrayList<CL_Pokemon> pokemons=arena.getPokemons();
@@ -133,6 +171,10 @@ public class threadAgents implements Runnable{
         }
     }
 
+    /**
+     * this method get String json and update the agent to CL_Agent.
+     * @param json
+     */
     private void updateAgent(String json) {
         try {
             JSONObject ttt = new JSONObject(json);
