@@ -20,7 +20,6 @@ public class Ex2 implements Runnable {
      * this main() method get String form the user that keep the id and level that choose the user in the cmd page.
      * this main() method check if the data in the String [] args about the id and level is correlate to the demand,if so
      * the game start,else the login page will show.
-     * i
      * @param args
      */
     public static void main(String[] args) {
@@ -88,6 +87,7 @@ public class Ex2 implements Runnable {
         System.out.println(game.toString());
         System.exit(0);
     }
+
 
     public void entrancePage(){
         this.entrancePage=new MyLoginPage();

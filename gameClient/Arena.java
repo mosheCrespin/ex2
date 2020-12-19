@@ -170,6 +170,13 @@ public class Arena{
 		return ans;
 	}
 
+	/**
+	 * this method get pokemon and graph .run over all the edges that start from this nodes if this pokemon we get in the method
+	 * show on this edge. if so the method set the pokemon on the edge, else non.
+	 *
+	 * @param fr
+	 * @param g
+	 */
 	public static void updateEdge(CL_Pokemon fr, directed_weighted_graph g) {
 		for (node_data v : g.getV()) {
 			for (edge_data e : g.getE(v.getKey())) {
@@ -181,6 +188,15 @@ public class Arena{
 		}
 	}
 
+	/**
+	 * this method check if the distance from the src node to the dest (the edge we check if the pokemon show on),is equal to the
+	 * distance from the src node to the pokemon+the distance from the pokemon to the dest.if so return true .else
+	 * return false .
+	 * @param p
+	 * @param src
+	 * @param dest
+	 * @return
+	 */
 	private static boolean isOnEdge(geo_location p, geo_location src, geo_location dest ) {
 		boolean ans = false;
 		double dist = src.distance(dest);
@@ -188,11 +204,31 @@ public class Arena{
 		if(dist>d1-EPS2) {ans = true;}
 		return ans;
 	}
+
+	/**
+	 * this method get geo_location p, int s, int d, directed_weighted_graph g ,and call this method isOnEdge(p,src,dest).
+	 * @param p
+	 * @param s
+	 * @param d
+	 * @param g
+	 * @return
+	 */
 	private static boolean isOnEdge(geo_location p, int s, int d, directed_weighted_graph g) {
 		geo_location src = g.getNode(s).getLocation();
 		geo_location dest = g.getNode(d).getLocation();
 		return isOnEdge(p,src,dest);
 	}
+
+	/**
+	 * this method get edge,pokemon's geo_location,type and graph. The method check if the type we get corresponding to the
+	 * src and dest.if the dest is bigger from the src so the type need to be positive else the pokemon can n't show on this edge
+	 * ,and if the src is bigger than the dest the type need to be negative that the pokemon possibly to be on this edge.
+	 * @param p
+	 * @param e
+	 * @param type
+	 * @param g
+	 * @return
+	 */
 	private static boolean isOnEdge(geo_location p, edge_data e, int type, directed_weighted_graph g) {
 		int src = g.getNode(e.getSrc()).getKey();
 		int dest = g.getNode(e.getDest()).getKey();
@@ -231,6 +267,12 @@ public class Arena{
 
 
 /////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * this method get String json and build a graph from this json and return him.
+	 * @param str
+	 * @return gson.fromJson(str, directed_weighted_graph.class)
+	 */
 	static directed_weighted_graph LoadGraphFromJson(String str) {
 		GsonBuilder builder = new GsonBuilder();
 		builder.registerTypeAdapter(directed_weighted_graph.class, new graphJsonDeserializer());
@@ -240,6 +282,15 @@ public class Arena{
 	/////////////////////////////////////////////////////////////////////////////////////
 
 	private static class graphJsonDeserializer implements JsonDeserializer<directed_weighted_graph> {
+		/**
+		 * this method get json element,type and make a new graph with all this data.
+		 *this method return the new graph.
+		 * @param jsonElement
+		 * @param type
+		 * @param jsonDeserializationContext
+		 * @return
+		 * @throws JsonParseException
+		 */
 		@Override
 		public  directed_weighted_graph deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
 			JsonObject jsonObject = jsonElement.getAsJsonObject();
@@ -260,6 +311,12 @@ public class Arena{
 			return g0;
 		}
 	}
+
+	/**
+	 * this method get String and change the input from 3w to 2w and return it.
+	 * @param str
+	 * @return
+	 */
 	private static geoLocation posToDouble(String str){
 		String[] a = str.split(",");
 		geoLocation ans =new geoLocation(Double.parseDouble(a[0]),Double.parseDouble(a[1]),Double.parseDouble(a[2]));
