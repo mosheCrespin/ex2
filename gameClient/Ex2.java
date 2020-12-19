@@ -2,8 +2,10 @@ package gameClient;
 import Server.Game_Server_Ex2;
 import api.DWGraph_Algo;
 import api.game_service;
+import api.node_data;
+
 import javax.swing.*;
-import java.util.List;
+import java.util.*;
 
 public class Ex2 implements Runnable {
     private Arena arena;
@@ -17,10 +19,9 @@ public class Ex2 implements Runnable {
     private static boolean cmdInput;
 
     /**
-     * this main() method get String form the user that keep the id and level that choose the user in the cmd page.
+     * this main() method get String from the user the ID and Level number via the Command Line.
      * this main() method check if the data in the String [] args about the id and level is correlate to the demand,if so
      * the game start,else the login page will show.
-     * i
      * @param args
      */
     public static void main(String[] args) {
@@ -42,7 +43,7 @@ public class Ex2 implements Runnable {
                 if (LevelIsNumeric && IdIsNumeric) {//check if id and level are numbers
                     _id = Integer.parseInt(id);
                     _level = Integer.parseInt(level);
-                    cmdInput = _level >= 0 && _level <= 23;
+                    cmdInput = true;
                 }
             }
         }
@@ -54,9 +55,13 @@ public class Ex2 implements Runnable {
     }
 
     /**
-     * this method run all the time the game is playing, this method check if the agent doesn't have pokemon to
-     * eat so the method told him whice node to go for.
-     * 	to go.
+     * this method run all the time the game is running.
+     *  first check if there were input via the cmd
+     * if so the game starts else the entrance panel show up
+     * also responsible to init the game.
+     * also responsible to start the threads of the agents
+     * there is a a while loop inside this method that responsible to update the panel and the move method of the server.
+     * 	at the end of the game this method will print the results.
      */
     @Override
     public void run() {
@@ -88,7 +93,13 @@ public class Ex2 implements Runnable {
         System.exit(0);
     }
 
-    public void entrancePage(){
+
+    /**
+     * this method show an Entrance frame.
+     * responsible to take an input from the user
+     * after the input received the frame close and the frame fo the game will show up
+     */
+    private void entrancePage(){
         this.entrancePage=new MyLoginPage();
         while(!this.entrancePage.get_user_successfully_connected()){
             System.out.print("");
@@ -101,8 +112,10 @@ public class Ex2 implements Runnable {
     }
 
     /**
-     *this method init all the information about the game like arena ,setpokemons ,
-     * numberofagnts amd also make the frame for the login panel.
+     *this method init all the information of the game
+     * including the graph of this level, the Pokemons and the agents
+     * also init the frame of the game.
+     * also starts the method distanceArr
      * @param game
      */
 
@@ -114,15 +127,38 @@ public class Ex2 implements Runnable {
         distnaceArr();
         this.arena.setPokemons(game.getPokemons());
         this.arena.setNumberOfAgents(game.toString());
-        for(CL_Pokemon pokemon: arena.getPokemons()) {
-            game.addAgent(pokemon.get_edge().getSrc());
+        int i=0;
+        int ReinforcementSrc=0;
+        int ReinforcementDest=0;
+        Queue<CL_Pokemon> q = new PriorityQueue<>(Comparator.comparingDouble(CL_Pokemon::getValue));
+        q.addAll(arena.getPokemons());
+        boolean flag=false;
+        CL_Pokemon curr;
+        while(!flag&&!q.isEmpty()){
+            curr=q.poll();
+            if(this.distance[curr.get_edge().getSrc()][curr.get_edge().getDest()]!=-1) {//not a trap
+                game.addAgent(curr.get_edge().getSrc());
+                game.chooseNextEdge(i,curr.get_edge().getDest());
+                i++;
+                ReinforcementSrc=curr.get_edge().getSrc();
+                ReinforcementDest=curr.get_edge().getDest();
+            }
+            if(i== arena.getNumberOfAgents()) {
+                flag = true;
+            }
         }
+        while(i<arena.getNumberOfAgents())//if the graph is not connected then send reinforcement to the other agents
+        {
+            game.addAgent(ReinforcementSrc);
+            game.chooseNextEdge(i,ReinforcementDest);
+            i++;
+        }
+
         this.arena.setAgents(Arena.getAgents(game.getAgents(), arena.getGraph()));
         _win = new MyJFrame("Pokemon Game",arena);
         _win.setSize(800, 600);
         MyPanel panel=new MyPanel(arena);
         _win.add(panel);
-
         _win.setVisible(true);
         _win.setTitle("Catch me if U can!");
         _win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -130,8 +166,9 @@ public class Ex2 implements Runnable {
     }
 
     /**
-     *this method run over all the nodes in the graph and calculate the distance to all other nodes in the graph, this information
-     *keep in the distance array. if this graph isn't connected so call the not_a_trap() method.
+     * this method run over all the nodes in the graph and calculate the distance to all other nodes in the graph.
+     * all the distances is stored in 2d matrix
+     * if this graph isn't connected so call the not_a_trap() method.
      * running time will take O(n*n*logV(V+E)).
      */
     private void distnaceArr(){
@@ -146,8 +183,8 @@ public class Ex2 implements Runnable {
     }
 
     /**
-     * this method run over all the nodes in the graph and check if there is a way to over from this node to the
-     * other nodes if no update the distance array with -1 ,distance[i][j] = -1 and also distance[j][i]=-1 .
+     * this method run over the distances matrix
+     * checke if distance[i][j] == -1 so  set distance[j][i] to -1.
      * running time of this method is O(n*n).
      */
     private void not_a_trap(){

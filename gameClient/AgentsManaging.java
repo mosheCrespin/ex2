@@ -43,22 +43,32 @@ public class AgentsManaging implements Runnable{
     }
 
     /**
-     ** this method run all the time the game is running and check for
-     * the agents where to go to eat pokemons.
+     * this method is managing the single agent while the game is running
+     * the algorithm goes like that-
+     * 1. check where is the best pokemon for this agent is allocate (using `whereShouldIGo` method)
+     * 2. now there is a target for this agent so enter start to do these simple things:
+     * 3. while the game is running there are 2 possible options:
+     * 3.1 this agent still has the old pokemon so when the agent is not moving do these things:
+     * 3.1.1 first tell the server to move forward the pokemon (one node for every call)
+     * 3.1.2 check if there is another pokemon on this edge using `isTherePokemonInThisEdge` method.
+     * 3.2 this agent just ate his pokemon or some other agent eat this pokemon
+     * 3.2.1 wait until this agent will eat the pokemon
+     * 3.2.2 find a new pokemon to eat (using `whereShouldIGo` method)
+     * 3.2.3 tell the server move forward the new pokemon
      */
     @Override
     public void run() {
         int nextNode;
         whereShouldIGo();
         while (game.isRunning()) {
-            while (iterator<this._currPath.size()&&this.agent.get_curr_fruit().isStillFood()) {//there is still path to this pokemon
+            while (iterator<this._currPath.size()) {//there is still path to this pokemon
                 updateAgent(game.getAgents());
-                    if (!agent.isMoving()) {//check if this agent is not moving RN
+                    if (!agent.isMoving()) {//check if this agent is not moving right now
                             nextNode=this._currPath.get(iterator).getKey();
                             iterator++;
                             game.chooseNextEdge(agent.getID(), nextNode);
                             repeat.add(nextNode);
-                            isTherePokemonInThisEdge(agent.getSrcNode(), nextNode);
+                            isTherePokemonInThisEdge(agent.getSrcNode(), nextNode, false);
                             if(repeat.size()==6){
                                 strike();
                             }
@@ -78,9 +88,7 @@ public class AgentsManaging implements Runnable{
                 nextNode = this._currPath.get(iterator).getKey();
                 game.chooseNextEdge(agent.getID(), nextNode);
                 this.iterator++;
-                System.out.println("agent :" + agent.getID() + " moved from: " + agent.getSrcNode()
-                        + " to: " + nextNode);
-                isTherePokemonInThisEdge(agent.getSrcNode(), nextNode);
+                isTherePokemonInThisEdge(agent.getSrcNode(), nextNode, false);//check if there is another pokemon on this edge
             }
         }
     }
@@ -91,13 +99,14 @@ public class AgentsManaging implements Runnable{
      * @param src
      * @param dest
      */
-      private void isTherePokemonInThisEdge(int src, int dest){
+      private void isTherePokemonInThisEdge(int src, int dest,boolean flag){
           edge_data currEdge=graphAlgo.getGraph().getEdge(src,dest);
+          if(currEdge==null) return;
           for(CL_Pokemon currP: arena.getPokemons()) {
               if (currP != this.agent.get_curr_fruit()) {
-                  if (currP.get_edge() == currEdge) {
-                      currP.setIsStillFood(false);
-                      currP.setIsBusy(false);
+                  if(currP.get_edge().getSrc() == currEdge.getSrc()&&currP.get_edge().getDest()==currEdge.getDest()){
+                      currP.setIsStillFood(flag);
+                      currP.setIsBusy(flag);
                   }
               }
           }
@@ -105,11 +114,8 @@ public class AgentsManaging implements Runnable{
 
      private void strike() {
          if (repeat.get(0) == repeat.get(2) && repeat.get(2) == repeat.get(4))
-             if (repeat.get(1) == repeat.get(3) && repeat.get(3) == repeat.get(5)){
+             if (repeat.get(1) == repeat.get(3) && repeat.get(3) == repeat.get(5))
                  whereShouldIGo();
-                 int next=this._currPath.get(iterator).getKey();
-                 game.chooseNextEdge(agent.getID(),next);
-                 }
          this.repeat=new ArrayList<>();
      }
 
@@ -164,6 +170,12 @@ public class AgentsManaging implements Runnable{
             this._currPath=new ArrayList<>(this.pathes[agent.getSrcNode()][min.get_edge().getSrc()]);
             this._currPath.add(arena.getGraph().getNode(min.get_edge().getDest()));
             this.iterator=1;
+            int nextNode= this._currPath.get(iterator).getKey();
+            game.chooseNextEdge(agent.getID(), nextNode);
+            iterator++;
+            isTherePokemonInThisEdge(min.get_edge().getSrc(),min.get_edge().getDest(),true);
+            System.out.println("agent :" + agent.getID() + " moved from: " + agent.getSrcNode()
+                    + " to: " + nextNode);
         }
         else{
             this._currPath=new ArrayList<>();
@@ -183,4 +195,15 @@ public class AgentsManaging implements Runnable{
             jsonException.printStackTrace();
         }
 }
+    private void isTherePokemonInThisEdgeFirstTime(int src, int dest){
+        edge_data currEdge=graphAlgo.getGraph().getEdge(src,dest);
+        for(CL_Pokemon currP: arena.getPokemons()) {
+            if (currP != this.agent.get_curr_fruit()) {
+                if (currP.get_edge().getSrc() == currEdge.getSrc()&&currP.get_edge().getDest()==currEdge.getDest()) {
+                    currP.setIsStillFood(true);
+                    currP.setIsBusy(true);
+                }
+            }
+        }
+    }
 }

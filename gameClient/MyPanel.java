@@ -51,7 +51,7 @@ public class MyPanel extends JPanel {
     }
 
     /**
-     * this metho update the frame.the size frame doesn't change.
+     * this method update the frame.the size frame doesn't change.
      */
     private void updateFrame() {
         Range rx = new Range(50,this.getWidth()-50);

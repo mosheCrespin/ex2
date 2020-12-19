@@ -7,6 +7,8 @@ import api.node_data;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
 
+import java.util.Iterator;
+
 
 public class CL_Agent {
 		private int _id;
@@ -18,6 +20,7 @@ public class CL_Agent {
 		private CL_Pokemon _curr_fruit;
 		private double _value;
 		private int dest;
+
 
 	/**
 	 * This constructor get graph and agent's start node.the method update the agent to the start node.

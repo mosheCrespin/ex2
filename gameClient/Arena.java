@@ -117,7 +117,7 @@ public class Arena{
 	}
 	public void setGraph(directed_weighted_graph g) {this._gg =g;}//init();}
 	public List<CL_Agent> getAgents() {return _agents;}
-	public ArrayList<CL_Pokemon> getPokemons() {return _pokemons;}
+	public synchronized ArrayList<CL_Pokemon> getPokemons() {return _pokemons;}
 
 	public directed_weighted_graph getGraph() {
 		return _gg;
