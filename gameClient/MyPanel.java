@@ -49,6 +49,10 @@ public class MyPanel extends JPanel {
             e.printStackTrace();
         }
     }
+
+    /**
+     * this metho update the frame.the size frame doesn't change.
+     */
     private void updateFrame() {
         Range rx = new Range(50,this.getWidth()-50);
         Range ry = new Range(this.getHeight()-50,50);
@@ -57,6 +61,11 @@ public class MyPanel extends JPanel {
         _w2f = Arena.w2f(g,frame);
     }
 
+    /**
+     * this method call all the methods that update or draw in the game page.
+     * like update frame ,draw the nodes,edges, pokemons ,agent and info about the game.
+     * @param g
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -70,20 +79,33 @@ public class MyPanel extends JPanel {
 
 
     }
+
+    /**
+     * this method draw a photo in the background of the game.
+     * @param g
+     */
     private void drawBG(Graphics g){
 
         g.drawImage(backGround,0,0,getWidth(),getHeight(),null);
     }
+
+    /**
+     * this method draw info in the game page. how much time left in this game,moves how much pokemons,pokemon and the
+     * time left.
+     * @param g
+     */
     private void drawInfo(Graphics g){
         ArrayList<Integer> info= arena.getInfo();
         this.infoA.setText("Time Left: " + info.get(5) +
                 "  Moves: " + info.get(3) + "  Grade: " + info.get(4) + "   ");
         this.infoB.setText(" Pokemons: " + info.get(0) + ", Agents: " + info.get(1) + ", Game Level: " + info.get(2) + "  ");
 
-
-
-
     }
+
+    /**
+     * this method get Graphics g and run over all the pokemons and draw them in the graph.
+     * @param g
+     */
     private void drawPokemons(Graphics g){
         int r=8;
     for(CL_Pokemon pokemon:arena.getPokemons()){
@@ -95,6 +117,11 @@ public class MyPanel extends JPanel {
         g.drawString("id: " + str + " , Value: "+pokemon.getValue(),(int) fp.x(), (int) fp.y() - 2 * r);
     }
     }
+
+    /**
+     * this method get Graphics g and run over all the agents and draw them in the graph.
+     * @param g
+     */
     private void drawAgants(Graphics g) {
         int r = 8;
         int i=0;
@@ -112,6 +139,11 @@ public class MyPanel extends JPanel {
             i++;
         }
     }
+    /**
+     * this method get Graphics g and run over all the nodes in the graph and send to another method the all
+     * edges that start from this node. the other method draw the edge in the graph.
+     * @param g
+     */
     private void drawEdges(Graphics g){
         g.setColor(Color.BLACK);
         for(node_data node:arena.getGraph().getV()){
@@ -121,6 +153,10 @@ public class MyPanel extends JPanel {
             }
         }
     }
+    /**
+     * this method get edge_data e , Graphics g and  draw the edge in the graph.
+     * @param g
+     */
     private void drawEdge( edge_data e, Graphics g) {
             directed_weighted_graph gg = arena.getGraph();
             geo_location s = gg.getNode(e.getSrc()).getLocation();
@@ -132,6 +168,12 @@ public class MyPanel extends JPanel {
             twoD.setStroke(new BasicStroke(6));
             twoD.drawLine((int)s0.x(), (int)s0.y(), (int)d0.x(), (int)d0.y());
     }
+
+    /**
+     * this method run over all the nodes in the graph and send all node to another method call drawNode(node_data n, int r, Graphics g)
+     * that draw this node.
+     * @param g
+     */
     private void drawNodes(Graphics g) {
         g.setColor(Color.BLUE);
         g.setFont(new Font("", Font.BOLD, 14));
@@ -139,6 +181,13 @@ public class MyPanel extends JPanel {
             drawNode(node, 5, g);
         }
     }
+
+    /**
+     * this method draw the nodes in the graph page.
+     * @param n
+     * @param r
+     * @param g
+     */
         private void drawNode(node_data n, int r, Graphics g) {
             geo_location pos = n.getLocation();
             geo_location fp = this._w2f.world2frame(pos);
