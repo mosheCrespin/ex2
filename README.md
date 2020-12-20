@@ -1,11 +1,26 @@
 #ex2
-*this project get from the server a directional weighted graph,number of agents and pokemons with location the algoritem need to
- eat the pokemons in shortest time. 
-**info:**
-*there are 2 packages in this project api and gameclient that we wrote in.in the api package there are 5 classes: NodeData,EdgeData,geoLocation,
- DWGraph_DS and DWGraph_Algo and in util there are 9 class
-Arena,CL_Agent,CL_Pokemon,Ex2,moveMethod,MyJFrame,MyLoginPage,MyPaneland threadAgents .
+**this project is assighment number 3 of the course Object Oriented programming in Ariel University **
+//////////////////////////////////////////////////////////////////////////////////////////////////////
 
+**how to start?**
+first clone this repository using this following command: `git clone https://github.com/mosheCrespin/ex2.git`
+
+
+
+
+
+
+**first info:**
+*there are 2 packages in this project: `api` and `gameClient`. 
+inside `api` package there are 5 classes: `NodeData`, `EdgeData`, `geoLocation`, `DWGraph_DS` and `DWGraph_Algo`
+inside gameClient there is 1 package called util that contaims 4 classes and another 8 classes.
+`util` has 4 classes named `Point3D`, `Range`, `Range2D`, `Range2Range`.
+`gameClient` also contains anothr 7 classes: Arena, CL_Agent, CL_Pokemon, Ex2 ,MyLoginPage ,MyPanel and AgentManaging.
+
+**put attention that you can find the Algorithm of the game in Line 213 under the explanation of AgentsManaging class**
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+**classes of api packege: **
 **NodeData**
 
 *this class is public. Each node has 5 instance variables: `Key`-a unique id for this node. `info`- the information that the node holds,
@@ -13,19 +28,21 @@ Arena,CL_Agent,CL_Pokemon,Ex2,moveMethod,MyJFrame,MyLoginPage,MyPaneland threadA
 
 *In this class there are getters and setters(there is no setter for key) and there is `toString()` method and `NodeData` constructor that get `node_data`;
 
-////////////////////////////
+-------------------------------
 **EdgeData**
 
 *this class is public represent a connection between nodes in the graph,all edges are one direction:`src`-the node that the edge start from ,
 `dest`-the destination of the edge,`whight`-the weight of the age`info`-meta data associated with this edge and `tag``EdgeData`-
 *In this class there are getters and setters(there is no setter for src and dest) and there is `toString()` method and `EdgeData` constractor ;
 
+-------------------------------
 **geoLocation**
 
 *this class is public represent a location point using x,y,z :in this class there is `geoLocation` constructor that get x,y,z, and function that 
 get geo_location and return the distance between this location and the given location.
 *In this class there are getters and `geoLocation` constractor ;
-
+ 
+--------------------------------
 **WGraph_DS**
 
 *this class is public represents directed (positive) Weighted Graph. this class holds Nodedata as inner class. each object of this class contains 
@@ -61,7 +78,7 @@ all the nodes in the graph;
 
 *In this class there is a `DWGraph_DS()` constructor for build a new directed_weighted_graph.
 
-///////////////////////////
+------------------------------------
 
 **DWGraph_Algo**
 
@@ -90,83 +107,81 @@ if the process succeeded;
 *In this class there is a inner class name 'graphJsonDeserializer' that have 'directed_weighted_graph' function that get jesons make a new graph 
 and deserialize the information to the new graph.  
 
-/////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+**classes of package gameClient**
 
 **Arena**
 
-*this class represent the//?? 
+**his class represent the arena of the game includig the graph, pokemons and agents**
  
- *the `setPokemons(String json)` method get Json String and update the pokemons in the graph in the pokemons location.
+*the `setPokemons(String json)` method get a Json and and convert it to a List of pokemons including update their edges
  
- *the `setNumberOfAgents(String json)` method get Json String and update the number of agents.
+*the `setNumberOfAgents(String json)` method get a Json and update the number of agents
  
- *the `setInfo (String json)` method get Json String  and update the info about this game we get from the server.
+*the `setInfo (String json)` method get a Json and update the info about this game (the Json came from the server of the game)
  
- *the `updateInfo(String json, int timeLeft )` method get Json String and timeLeft  this method update the move,grads and time left.
+*the `updateInfo(String json, int timeLeft )` method get Json String and timeLeft  this method updates the info for the curr time
  
- *the `json2Pokemons(String fs)` method get Json String and update pokemons in arraylist.
+*the `json2Pokemons(String fs)` method get a Json and convert it to a Pokemon List 
  
- *the `updateEdge(CL_Pokemon fr, directed_weighted_graph g)` method get String in Json and update the pokemons in the graph in the pokemons location.
+ *the `updateEdge(CL_Pokemon fr, directed_weighted_graph g)` get a pokemon and find which edge belongs to this pokemon , this method has 3 more helpful methods that has the same name (`isOnEdge()`) these methods helps to find this edge 
+ 
+the `GraphRange(directed_weighted_graph g)` method get the graph and check what is the range of this graph
 
-*the `updateEdge(CL_Pokemon fr, directed_weighted_graph g)` method update the edge of he exist.
+the `w2f(directed_weighted_graph g, Range2D frame)` method convert from the graph range to the frame range. this method useing `GraphRange()` method to find the range of the graph.
 
-*the `graphJsonDeserializer implements JsonDeserializer<directed_weighted_graph>` method update the graph with the nodes and edges we get from the server.
+the `LoadGraphFromJson(String str)` gets a Json represents a graph from the server, and convert it into a graph object using Gson and an inner class named `graphJsonDeserializer`.
 
-////////
 
+-----------------------------------------------------------------
 **CL_Agent**
 
-*this class represent the data of the agents in the graph like agents location,id ,node they move from and node they go to and value.  
+*this class represent all the data that connected to a single agent of the game including his ID and the curr target(a pokemon).
  
- *the `update(String json)` method get Json String and update the agents data.
- 
- *the `setNextNode(int dest)` method get Json String and update the number of agents.
- 
- *in this class there are alot of getters to get infromation about the agent like- `getLocation`,`getValue`,`getID`,`getNextNode`,`getSpeed `t,`get_curr_edge`,`isMoving` and`getSrcNode`.
- and setters like  `setSpeed` ,`set_curr_edge` ,`setCurrNode` ,`setNextNode`,`set_sg_dt`,`set_curr_fruit`.  
- and `toString` method .
- 
- //////
+ *this class has getters and setters and ofcours `toString` method
+ *the `update(String json)` method get Json and update the agent information. also if this agent on the move this function will print to the screen where he is going
+
+ ////////////////////////////////////////////////////
  
  **CL_Pokemon**
  
- *this class represent the data of the pokemons in the graph like id,edge,value,type,pos,min_dist,min_ro also we have busy HashSet that get all the catch pokemons .    
+ *this class represent the data of the pokemons in the graph like uniqe id, edge, value, type, pos and there is a `Hashsets` called busy. 
+
+ **some explenation about the hashset**
+ every pokemon gets is own uniqe `id` that calculate like that- point is the location of the pokenon so do this calculation (point.x() + point.y() + v + t)
+ once we have uniqe id for every pokemon we can add this pokemon to a HashSet that contains all the pokemons that on the aim of some agent.
  
- *In this class there are alot of getters like -` getId` ,` isBusy` ,` isStillFood` ,` get_edge` ,` getLocation` ,` getType` ,`getValue` . 
+ the `setIsBusy()` method gets boolean value, if true then add this pokemon to the Hashset else remove this pokemon from the Hashset
  
- *In this class there are 3 setters like-`set_edge(edge_data _edge)` ,`setIsStillFood(boolean flag)`, `setIsBusy(boolean flag)`.
+ the `isBusy()` method return if this pokemon is on the aim of some agent.
  
- and `toString` method that print pokemons value and type  .
+ *this class also has getters and setters and ofcourse `toString` method
  
- //////////
- 
- **MyJFrame**
- *this class is to do the frame page.
- ///////////
+
+ /////////////////////////////////////////////////////
  
  **MyLoginPage**
  
- *this class is to show the login page for the game in this page the user need to choose a level from  0 to 23 ,
- if he want he can add his id  presss the buttom and the game start,there is a exit buttom to exit this page.
+ *this class is responsible to the login page for the game.
+ this class extends JFrame and implements ActionListener and MouseListener 
+ in this page the user need to choose a level between 0 to 23,  also there is an optional field for adding an id number.
+ *the constructor of this class responsible for how the login frame will look like.
+ * 'actionPerformed(ActionEvent e)' this method check if the input that the user entered is legal, if so then the game will start with this input. otherwise the user will get notified that the input is not legal. 
  
- *In this class there is a method call 'MyLoginPage()' that make the login page and declare how this page look like like where to out the buttom to 
- press the id and the level we want to play whice size the page will be and more.
+ *the 'mousePressed(MouseEvent e)' method removes the "Optional" word from the text field connected to the ID.
  
- * 'actionPerformed(ActionEvent e)' this method check if the input that the user give is legal we over to the game page else he print the reson
- why this input is not good. 
+ *the method `get_user_successfully_connected()` return boolean value represents if the user enterd legal input. if true then the game begins.
  
- *the 'mousePressed(MouseEvent e)' method check if the detals the user press are good.
- 
- *this method have gettrs like 'get_user_successfully_connected()',get_user_entered_id(),getId_num(),getLevel_num() .
+ *the other getters are responsible for delivering the input from this class to another class(in our case to `Ex2.java`)
  
  
- //////////
+ ////////////////////////////////////////
  
  **MyPanel**
  
- *this class is to show the game page.in this page show the graph with the agents run over the pokemons .
- there is a exit buttom to end this game.
- 
+ *this class is responsible to show the GUI of the game.
+
  *the 'updateFrame()' method declare whice size the frame will show.
  
  *the 'paintComponent(Graphics g)' method update the frame and draw the nodes edges agents pokemons Info and drawBG.
@@ -188,44 +203,55 @@ and deserialize the information to the new graph.
  *the 'drawNodes(Graphics g)' method run over all the nodes in the graph.
  
  *the 'drawNode(node_data n, int r, Graphics g)' method print all the nodes to the frame.
+ *there is also an exit buttom to end this game.
  
-///////////
+/////////////////////////////
 
-**threadAgents**
- *the threadAgents(List<node_data>[][] path, double[][] distanceArr, DWGraph_Algo graph_algo, Arena arena, CL_Agent agent, game_service game)
- 
- * the 'run()' method run all the time the game is running and check for the agents where to go to eat pokemons.
- 
+**AgentsManaging**
+*this class is responsible for the Algorithm of each agent. 
+the `run` method is responible for the algorithm of each agent.
+**the algorithm**
+     while the game is running do these steps for each agent:
+     * 1. check where is the best pokemon for this agent is allocate(call to `whereShouldIGo()` method.
+     * 1.1 the best pokemon is the one that has the biggest value and the smallest path
+     * 2. now there is a target for this agent so start to do these simple things:
+     * 3. while the game is running there are 2 possible options:
+     * 3.1 this agent still has the old pokemon so when the agent is not moving do these things:
+     * 3.1.1 first tell the server to move forward the pokemon (one node for every call)
+     * 3.2 this agent just ate his pokemon so do these steps:
+     * 3.2.1 wait until this agent will eat the pokemon
+     * 3.2.2 find a new pokemon to eat (using `whereShouldIGo` method) 
+     * 3.2.3 check if there is another pokemon on this edge (using 'isTherePokemonInThisEdge()' method) if so then eat this Pokemon too
+     * 3.2.4 tell the server to move forward the new pokemon
+     
  * the 'isTherePokemonInThisEdge(int src, int dest)' method run over all the pokemons and check if this pokemons is on this edge.
  
  * the 'timeToGetToPokemon(CL_Pokemon pokemon)' method return the time it will take to the agent to get to the pokemon.
  
- * the 'value(CL_Pokemon pokemon)' method return the value of the pokemons this method calculate and return the (time to get to the pokemon) / (pokemon.getValue());  
+ * the 'value(CL_Pokemon pokemon)' method return the value of the pokemons this method calculate (the return value of `time to get to the pokemon()` / the value of this pokemon  
+ * the 'whereShouldIGo()' method run over all the pokemons that existent in this moment and check whice of them is closest and also free .the 
+ method say to the agent to go to this pokemon. 
  
- * the 'whereShouldIGo()' method run over all the pokemons that existent in this moment and check whice of them is closest and also free.the 
- method say to the agent to go to the this pokemon. 
+ * the 'updateAgent(String json)' method updates the agent info from a Json.
  
- * the 'updateAgent(String json)' method update the agent from string json to CL_Agent.
- 
- * the 'strike()' method check if the agent try to eat this pokemon 3 time and didn't succeed and tell him to run over another pokemon.
+ * the 'strike()' method check if the agent try to eat this pokemon 3 time and didn't succeed if so then tell him to run over another pokemon.
   
- ///////////
+ ////////////////////////////////
  **Ex2**
- *the 'main(String[] args)' method get from the user detail his id and level he choose of the game and if the detail are matching the game start.
- 
-	*the 'run()' method run all the time the game is running, this method check if the agent doesn't have agent to eat so the method told him whice node 
-	to go.
+ *there are 2 options for the start of this game:
+ if the game starts from the Command Line with input of level and ID (Optional) then the game starts with that input.
+ otherwise an entrence frame will pop up and wait wo the user to enter the level he wants and his ID(Optional)
+*the 'run()' method is Responsible for managing the game, this includes to ןnitialize the game, refreshing the frame(GUI) and tell the server to move(game.move()) in a constant time of 100 ms.
+
+*the 'entrancePage()' method shows the login panel until the user succeed to enter a valid input
+
+*the 'init(game_service game) method init all the information about the game like arena ,setpokemons ,numberofagnts and also make the frame for 
+the GUI of the game.
 	
-	*the 'entrancePage()' method show the login panel until the user succeed to get to the game panel.
+*the 'distnaceArr()'method run over all the nodes in the graph and calculate the distance to all other nodes in the graph, this information
+keeps in the distance matrix (2D).
 	
-	*the 'init(game_service game) method init all the information about the game like arena ,setpokemons ,numberofagnts amd also make the frame for 
-	the login panel.	
+*the 'not_a_trap()' method check whice node in the graph is in a deadlock if so then distance[i][j]==distance[j][i]==-1.
 	
-	*the 'distnaceArr()'method run over all the nodes in the graph and calculate the distance to all othe nodes in the graph this information
-	keep in the distance array.
-	
-	*the 'not_a_trap()' method check whice node in the graph is in a deadlock.
-	
-	*the 'pathArr(int nodeSize)' method get number of nodes in the graph and update thr path[][] that contains the list nodes that need to over if the agent want to over from 
-	one node to another.	
+*the 'pathArr(int nodeSize)' run over all the nodes in the graph and keeps all the shortest pathes in a matrix of lists.
 	
