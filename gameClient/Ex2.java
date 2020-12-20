@@ -112,7 +112,8 @@ public class Ex2 implements Runnable {
      * also starts the method distanceArr
      * this method also responsible to put the first agents at their location using this algorithm
      * 1. put all the pokemons inside a priority queue with a comparator
-     * 2. while the q is not empty and there is more agents to put then pull a pokemon and determine a agent on this pokemon.
+     * 2. add all the pokemons from the queue into a stack
+     * 2. while the stack is not empty and there is more agents to put then pull a pokemon and determine an agent on this pokemon.
      * 3. if the graph is not connected then send the rest of the agents as reinforcement to the part that the graph is connected
      * @param game
      */
@@ -128,12 +129,16 @@ public class Ex2 implements Runnable {
         int i=0;
         int ReinforcementSrc=0;
         int ReinforcementDest=0;
-        Queue<CL_Pokemon> q = new PriorityQueue<>(Comparator.comparingDouble(CL_Pokemon::getValue));
-        q.addAll(arena.getPokemons());
+        Queue<CL_Pokemon> pq = new PriorityQueue<>(Comparator.comparingDouble(CL_Pokemon::getValue));
+        pq.addAll(arena.getPokemons());
+        Stack<CL_Pokemon> stack=new Stack<>();
+        for(int j=0; j<arena.getPokemons().size();j++){
+            stack.add(pq.poll());
+        }
         boolean flag=false;
         CL_Pokemon curr;
-        while(!flag&&!q.isEmpty()){//check if there is still agents to add
-            curr=q.poll();
+        while(!flag&&!stack.isEmpty()){//check if there is still agents to add
+            curr=stack.pop();
             if(this.distance[curr.get_edge().getSrc()][curr.get_edge().getDest()]!=-1) {//not a trap
                 game.addAgent(curr.get_edge().getSrc());
                 game.chooseNextEdge(i,curr.get_edge().getDest());
@@ -145,6 +150,8 @@ public class Ex2 implements Runnable {
                 flag = true;
             }
         }
+        System.out.println(arena.getPokemons().toString());
+        System.out.println(game.getAgents());
         while(i<arena.getNumberOfAgents())//if the graph is not connected then send reinforcement to the other agents
         {
             game.addAgent(ReinforcementSrc);
