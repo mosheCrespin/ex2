@@ -4,10 +4,18 @@
 
 **how to start?**
 first clone this repository using this following command: `git clone https://github.com/mosheCrespin/ex2.git`
+once the clone finishd there will be an ex2 folder. enter to this folder and there will be a file called ex2.jar.
+**please do not drag ex2.jar file outside the curr folder otherwise the game will not work!**
 
-
-
-
+now you have two options:
+option 1: start the program using cmd:
+* open the cmd in the curr location inside the folder ex2
+* enter this command `java -jar ex2.jar <id> <level number>` put attention that you don't have to insert id and level number
+* if you enterd id and level number then the game will start
+* otherwise if you did not insert id and level number then a login frame will pop up.
+option 2: start the program via double click on ex2.jar file:
+* if you choose this option then the login page will pop up and will wait for you to insert your ID(optional) and the level number
+* if you entered a legal input then the game will start
 
 
 **first info:**
@@ -17,7 +25,7 @@ inside gameClient there is 1 package called util that contaims 4 classes and ano
 `util` has 4 classes named `Point3D`, `Range`, `Range2D`, `Range2Range`.
 `gameClient` also contains anothr 7 classes: Arena, CL_Agent, CL_Pokemon, Ex2 ,MyLoginPage ,MyPanel and AgentManaging.
 
-**put attention that you can find the Algorithm of the game in Line 213 under the explanation of AgentsManaging class**
+**put attention that you can find the Algorithm of the game in this file under the explanation of AgentsManaging class**
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 **classes of api packege: **
@@ -230,7 +238,7 @@ the `run` method is responible for the algorithm of each agent.
  
  * the 'value(CL_Pokemon pokemon)' method return the value of the pokemons this method calculate (the return value of `time to get to the pokemon()` / the value of this pokemon  
  * the 'whereShouldIGo()' method run over all the pokemons that existent in this moment and check whice of them is closest and also free .the 
- method say to the agent to go to this pokemon. 
+ *method say to the agent to go to this pokemon. 
  
  * the 'updateAgent(String json)' method updates the agent info from a Json.
  
