@@ -45,12 +45,11 @@ public class AgentsManaging implements Runnable{
      * this method is managing the single agent while the game is running
      * the algorithm goes like that-
      * 1. check where is the best pokemon for this agent is allocate (using `whereShouldIGo` method)
-     * 2. now there is a target for this agent so enter start to do these simple things:
+     * 2. now there is a target for this agent so start to do these simple things:
      * 3. while the game is running there are 2 possible options:
      * 3.1 this agent still has the old pokemon so when the agent is not moving do these things:
      * 3.1.1 first tell the server to move forward the pokemon (one node for every call)
-     * 3.1.2 check if there is another pokemon on this edge using `isTherePokemonInThisEdge` method.
-     * 3.2 this agent just ate his pokemon or some other agent eat this pokemon
+     * 3.2 this agent just ate his pokemon so do these steps:
      * 3.2.1 wait until this agent will eat the pokemon
      * 3.2.2 find a new pokemon to eat (using `whereShouldIGo` method)
      * 3.2.3 tell the server to move forward the new pokemon
@@ -67,7 +66,6 @@ public class AgentsManaging implements Runnable{
                     iterator++;
                     game.chooseNextEdge(agent.getID(), nextNode);
                     repeat.add(nextNode);
-                    isTherePokemonInThisEdge(agent.getSrcNode(), nextNode, false);
                     if (repeat.size() == 6) {
                         strike();
                     }
@@ -76,29 +74,23 @@ public class AgentsManaging implements Runnable{
 
             //just eat the pokemon so now find a new one to eat
             updateAgent(game.getAgents());
-            while(agent.isMoving()){
+            while(agent.getDest()!=-1){
                 updateAgent(game.getAgents());
             }
             agent.get_curr_fruit().setIsBusy(false);
-            agent.get_curr_fruit().setIsStillFood(false);
             whereShouldIGo();
             if(iterator<this._currPath.size()) {
                 nextNode = this._currPath.get(iterator).getKey();
                 game.chooseNextEdge(agent.getID(), nextNode);
                 this.iterator++;
-                isTherePokemonInThisEdge(agent.getSrcNode(), nextNode, false);//check if there is another pokemon on this edge
             }
         }
     }
     /**
      * this method get src and dest and convert them into an edge
      * this method responsible to check if there is another pokemon in this edge
-     * there are 2 options for this edge
-     * option 1-(flag==false)
-     * while the agent is moving forward his target, in every move he check if there is another pokemon on this edge
-     * if so, then tell the another agent that his pokemon is not relevant any more
-     * option 2- (flag==true)
-     * when the agent found via the method `whereShouldIGo()` a new target then he check if there is another pokemon on the edge of his pokemon
+     * when the agent found via the method `whereShouldIGo()` a new target
+     * then he check if there is another pokemon on the edge of his pokemon
      * if so, then he also take this pokemon as a target.
      * @param src the src of the edge
      * @param dest the dest of the edge
@@ -110,7 +102,6 @@ public class AgentsManaging implements Runnable{
           for(CL_Pokemon currP: arena.getPokemons()) {
               if (currP != this.agent.get_curr_fruit()) {
                   if(currP.get_edge().getSrc() == currEdge.getSrc()&&currP.get_edge().getDest()==currEdge.getDest()){
-                      currP.setIsStillFood(flag);
                       currP.setIsBusy(flag);
                   }
               }
@@ -177,11 +168,10 @@ public class AgentsManaging implements Runnable{
      */
     private void whereShouldIGo(){
         arena.setPokemons(game.getPokemons());//update all the pokemons
-        ArrayList<CL_Pokemon> pokemons=arena.getPokemons();
         CL_Pokemon min =null;
         double tempSDT;
         double minSDT=Double.MAX_VALUE;
-        for (CL_Pokemon pokemon : pokemons) {
+        for (CL_Pokemon pokemon : arena.getPokemons()) {
             if (!pokemon.isBusy()) {//check if the pokemon is busy
                 tempSDT = value(pokemon);
                 if ((tempSDT < minSDT) && tempSDT >= 0) {
@@ -193,7 +183,6 @@ public class AgentsManaging implements Runnable{
         if(min!=null) {
             agent.set_curr_fruit(min);
             min.setIsBusy(true);
-            min.setIsStillFood(true);
             updateAgent(game.getAgents());
             this._currPath=new ArrayList<>(this.pathes[agent.getSrcNode()][min.get_edge().getSrc()]);
             this._currPath.add(arena.getGraph().getNode(min.get_edge().getDest()));

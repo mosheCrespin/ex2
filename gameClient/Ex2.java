@@ -2,8 +2,6 @@ package gameClient;
 import Server.Game_Server_Ex2;
 import api.DWGraph_Algo;
 import api.game_service;
-import api.node_data;
-
 import javax.swing.*;
 import java.util.*;
 
@@ -112,6 +110,10 @@ public class Ex2 implements Runnable {
      * including the graph of this level, the Pokemons and the agents
      * also init the frame of the game.
      * also starts the method distanceArr
+     * this method also responsible to put the first agents at their location using this algorithm
+     * 1. put all the pokemons inside a priority queue with a comparator
+     * 2. while the q is not empty and there is more agents to put then pull a pokemon and determine a agent on this pokemon.
+     * 3. if the graph is not connected then send the rest of the agents as reinforcement to the part that the graph is connected
      * @param game
      */
 
@@ -130,7 +132,7 @@ public class Ex2 implements Runnable {
         q.addAll(arena.getPokemons());
         boolean flag=false;
         CL_Pokemon curr;
-        while(!flag&&!q.isEmpty()){
+        while(!flag&&!q.isEmpty()){//check if there is still agents to add
             curr=q.poll();
             if(this.distance[curr.get_edge().getSrc()][curr.get_edge().getDest()]!=-1) {//not a trap
                 game.addAgent(curr.get_edge().getSrc());
@@ -151,7 +153,6 @@ public class Ex2 implements Runnable {
         }
 
         this.arena.setAgents(Arena.getAgents(game.getAgents(), arena.getGraph()));
-//        _win = new MyJFrame();
         _win=new JFrame();
         _win.setSize(800, 600);
         MyPanel panel=new MyPanel(arena);

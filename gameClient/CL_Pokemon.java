@@ -1,4 +1,5 @@
 package gameClient;
+import api.EdgeData;
 import api.edge_data;
 import gameClient.util.Point3D;
 import org.json.JSONObject;
@@ -14,8 +15,6 @@ public class CL_Pokemon {
 	private double min_dist;
 	private int min_ro;
 	private static HashSet<Double> busy=new HashSet<>();
-	private static HashSet<Double> isfood=new HashSet<>();
-
 	/**
 	 * this method get pokemon data and init this data.
 	 * @param id
@@ -53,22 +52,6 @@ public class CL_Pokemon {
 		else busy.remove(id);
 	}
 
-	/**
-	 * this method check if the pokemon already eaten
-	 * @return
-	 */
-	public  synchronized boolean isStillFood(){return isfood.contains(id);}
-
-	/**
-	 * this method get boolean and update if the pokemon already eaten.
-	 * @param flag
-	 */
-	public synchronized void setIsStillFood(boolean flag){//true means this pokemon did not been eaten
-		if(flag)
-			isfood.add(id);
-		else isfood.remove(id);
-	}
-
 	public String toString() {return "F:{v="+_value+", t="+_type+"}";}
 
 	/**
@@ -76,6 +59,8 @@ public class CL_Pokemon {
 	 * @return
 	 */
 	public synchronized edge_data get_edge() {
+		if(this._edge==null)
+			return new EdgeData(0,0,0);
 		return _edge;
 	}
 
@@ -87,7 +72,7 @@ public class CL_Pokemon {
 	 * this method return the pokemon location.
 	 * @return _pos
 	 */
-	public Point3D getLocation() {
+	public synchronized Point3D getLocation() {
 		return _pos;
 	}
 	/**

@@ -12,7 +12,6 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -237,11 +236,10 @@ public class Arena{
 	}
 
 	private static Range2D GraphRange(directed_weighted_graph g) {
-		Iterator<node_data> itr = g.getV().iterator();
-		double x0=0,x1=0,y0=0,y1=0;
+		double x0=0 ,x1=0 ,y0=0 ,y1=0;
 		boolean first = true;
-		while(itr.hasNext()) {
-			geo_location p = itr.next().getLocation();
+		for(node_data curr:g.getV()){
+			geo_location p = curr.getLocation();
 			if(first) {
 				x0=p.x(); x1=x0;
 				y0=p.y(); y1=y0;
@@ -260,8 +258,7 @@ public class Arena{
 	}
 	public static Range2Range w2f(directed_weighted_graph g, Range2D frame) {
 		Range2D world = GraphRange(g);
-		Range2Range ans = new Range2Range(world, frame);
-		return ans;
+		return new Range2Range(world, frame);
 	}
 
 
@@ -272,7 +269,7 @@ public class Arena{
 	 * @param str
 	 * @return gson.fromJson(str, directed_weighted_graph.class)
 	 */
-	static directed_weighted_graph LoadGraphFromJson(String str) {
+	public static directed_weighted_graph LoadGraphFromJson(String str) {
 		GsonBuilder builder = new GsonBuilder();
 		builder.registerTypeAdapter(directed_weighted_graph.class, new graphJsonDeserializer());
 		Gson gson = builder.create();

@@ -40,10 +40,10 @@ public class MyPanel extends JPanel {
         this.add(this.infoB);
 
         try {
-            this.backGround= ImageIO.read(new File("src\\data\\BackGround.jpg"));
-            this.boaz=ImageIO.read(new File("src\\data\\boaz.png"));
-            this.ishay=ImageIO.read(new File("src\\data\\ishay.png"));
-            this.moshe=ImageIO.read(new File("src\\data\\moshe.png"));
+            this.backGround= ImageIO.read(new File("data\\BackGround.jpg"));
+            this.boaz=ImageIO.read(new File("data\\boaz.png"));
+            this.ishay=ImageIO.read(new File("data\\ishay.png"));
+            this.moshe=ImageIO.read(new File("data\\moshe.png"));
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -20,11 +20,6 @@ public class Range2Range {
 		Point3D ans = _frame.fromPortion(d);
 		return ans;
 	}
-	public geo_location frame2world(geo_location p) {
-		Point3D d = _frame.getPortion(p);
-		Point3D ans = _world.fromPortion(d);
-		return ans;
-	}
 	public Range2D getWorld() {
 		return _world;
 	}

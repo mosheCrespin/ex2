@@ -58,9 +58,7 @@ public class CL_Agent {
 					double value = ttt.getDouble("value");
 					this._pos = pp;
 					this.setCurrNode(src);
-					this.set_curr_edge(src,dest);
 					this.setSpeed(speed);
-					this.setNextNode(dest);
 					this.setMoney(value);
 					if(dest!=this.dest&&dest!=-1) {
 						System.out.println("agent: " + this._id +  " moved from: " +src + " to: " +dest);
@@ -77,7 +75,7 @@ public class CL_Agent {
 	//@Override
 		public int getSrcNode() {return this._curr_node.getKey();}
 		public String toJSON() {
-			int d = this.getNextNode();
+			int d = this.getDest();
 			String ans = "{\"Agent\":{"
 					+ "\"id\":"+this._id+","
 					+ "\"value\":"+this._value+","
@@ -91,38 +89,10 @@ public class CL_Agent {
 		}
 		private void setMoney(double v) {_value = v;}
 
-		public boolean setNextNode(int dest) {
-			boolean ans = false;
-			int src = this._curr_node.getKey();
-			this._curr_edge = _gg.getEdge(src, dest);
-			if(_curr_edge!=null) {
-				ans=true;
-			}
-			else {_curr_edge = null;}
-			return ans;
-		}
 		public void setCurrNode(int src) {
 			this._curr_node = _gg.getNode(src);
 		}
-
-	/**
-	 * this method check if the agent moving now
-	 * if so the method return true else false.
-	 * @return ans
-	 */
-		public boolean isMoving() {
-			return (this.dest!=-1);
-		}
 		public int getDest(){return this.dest;}
-
-
-	/**
-	 * this method call toJSON() method.
-	 * @return
-	 */
-		public String toString1() {
-			return toJSON();
-		}
 
 		public String toString() {
 			String ans=""+this.getID()+","+dest +", "+","+this.getValue();
@@ -140,22 +110,6 @@ public class CL_Agent {
 		public double getValue() {
 			return this._value;
 		}
-		public void set_curr_edge(int src, int dest){
-			if(dest==-1) this._curr_edge=null;
-			else
-				this._curr_edge=_gg.getEdge(src,dest);
-		}
-
-		public int getNextNode() {
-			int ans = -2;
-			if(this._curr_edge==null) {
-				ans = -1;}
-			else {
-				ans = this._curr_edge.getDest();
-			}
-			return ans;
-		}
-
 		public double getSpeed() {
 			return this._speed;
 		}
@@ -169,8 +123,4 @@ public class CL_Agent {
 		public void set_curr_fruit(CL_Pokemon curr_fruit) {
 			this._curr_fruit = curr_fruit;
 		}
-		public edge_data get_curr_edge() {
-			return this._curr_edge;
-		}
-
 	}
