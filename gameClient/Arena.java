@@ -18,20 +18,18 @@ import java.util.List;
 /**
  * This class represents a multi Agents Arena which move on a graph - grabs Pokemons and avoid the Zombies.
  * @author boaz.benmoshe
- *
  */
 public class Arena{
-	public static final double EPS1 = 0.000001 , EPS2=EPS1*EPS1, EPS=EPS2;
+	public static final double EPS1 = 0.000001 , EPS2=EPS1*EPS1;
 	private directed_weighted_graph _gg;
 	private List<CL_Agent> _agents;
 	private ArrayList<CL_Pokemon> _pokemons;
 	private ArrayList<Integer> _info;
 	private int numberOfAgents;
-
-	public Arena() {}
-
 	/**
-	 * This method get json String and update the edge data the pokemon shows on.
+	 * This method get a Json of the curr situation of the pokemons of this game
+	 * this method convert the Json to a List of pokemons using `json2Pokemons(String)` method
+	 * after that this method run over the pokemons list and update the edge of each of theme(using `updateEdge()` method)
 	 * @param json
 	 */
 	public synchronized void setPokemons(String json) {
@@ -43,7 +41,7 @@ public class Arena{
 	}
 
 	/**
-	 * This method get String json and init the numberOfAgents.
+	 * This method get a Json and init the numberOfAgents.
 	 * @param json
 	 */
 	public void setNumberOfAgents(String json){
@@ -58,8 +56,8 @@ public class Arena{
 		}
 
 	/**
-	 * This method get String json and init the data about the game like how much pokemons,agents play in this game
-	 * the level of the game ,this information keep in ArrayList call info.
+	 * This method get a Json and init the data about the game
+	 * this information goes into ArrayList of info.
 	 * @param json
 	 */
 	public synchronized void setInfo (String json){
@@ -77,7 +75,7 @@ public class Arena{
 			this._info.add(2, game_level);
 			this._info.add(3, moves);
 			this._info.add(4, grade);
-			this._info.add(5,0);
+			this._info.add(5,0);//first init for time
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -89,7 +87,7 @@ public class Arena{
 
 
 	/**
-	 * This method get String json and timeLeft and update the information in _info ArrayList.
+	 * This method get a Json and timeLeft and update the information in _info ArrayList.
 	 * @param json
 	 * @param timeLeft
 	 */
@@ -125,7 +123,7 @@ public class Arena{
 	////////////////////////////////////////////////////
 
 	/**
-	 *this method get String and graph and return a list with the agents that play in this graph.
+	 *this method get a Json and a graph and return a list with the agents that play in this graph.
 	 * @param aa
 	 * @param gg
 	 * @return  List<CL_Agent>
@@ -145,9 +143,11 @@ public class Arena{
 		}
 		return ans;
 	}
+
 	/**
-	 * this method get a json String and update the data of the pokemons, keep the pokemons in a
-	 * ArrayList and return the ArrayList after the method end .
+	 *  this method get a Json and and convert this information to an a List of pokemons
+	 * @param fs a Json from calling the server via game.getPokemons()
+	 * @return ArrayList and return the ArrayList after the method end
 	 */
 	public static ArrayList<CL_Pokemon> json2Pokemons(String fs) {
 		ArrayList<CL_Pokemon> ans = new  ArrayList<CL_Pokemon>();
@@ -173,7 +173,6 @@ public class Arena{
 	/**
 	 * this method get pokemon and graph .run over all the edges that start from this nodes if this pokemon we get in the method
 	 * show on this edge. if so the method set the pokemon on the edge, else non.
-	 *
 	 * @param fr
 	 * @param g
 	 */

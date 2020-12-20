@@ -10,12 +10,12 @@ import java.util.*;
 public class Ex2 implements Runnable {
     private Arena arena;
     private DWGraph_Algo graphAlgo;
-    private static MyJFrame _win;
+    private static JFrame _win;
     private double [][] distance;
     private List[][] path;
     private static int _level;
     private static int _id;
-    MyLoginPage entrancePage;
+    private MyLoginPage entrancePage;
     private static boolean cmdInput;
 
     /**
@@ -26,8 +26,7 @@ public class Ex2 implements Runnable {
      */
     public static void main(String[] args) {
         Thread main = new Thread(new Ex2());
-
-        if((args.length==0)||(args.length==1))
+        if(args.length==0)
             cmdInput=false;
         else {
             String id = args[0];
@@ -35,9 +34,6 @@ public class Ex2 implements Runnable {
             if (id.length() > 10 || level.length() > 10) {
                 cmdInput = false;//not entered integer
             } else {
-                if (level.length() == 0) {
-                    cmdInput = false;//level number required
-                }
                 boolean IdIsNumeric = id.chars().allMatch(Character::isDigit);
                 boolean LevelIsNumeric = level.chars().allMatch(Character::isDigit);
                 if (LevelIsNumeric && IdIsNumeric) {//check if id and level are numbers
@@ -155,7 +151,8 @@ public class Ex2 implements Runnable {
         }
 
         this.arena.setAgents(Arena.getAgents(game.getAgents(), arena.getGraph()));
-        _win = new MyJFrame("Pokemon Game",arena);
+//        _win = new MyJFrame();
+        _win=new JFrame();
         _win.setSize(800, 600);
         MyPanel panel=new MyPanel(arena);
         _win.add(panel);

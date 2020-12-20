@@ -65,7 +65,6 @@ public class DWGraph_Algo implements dw_graph_algorithms {
 
     private  synchronized directed_weighted_graph  deepCopyOppositGraph() {
         directed_weighted_graph copiedGraph = new DWGraph_DS();
-        node_data temp;
         for (node_data curr : myGraph.getV()) {
             copiedGraph.addNode(new NodeData(curr));
         }

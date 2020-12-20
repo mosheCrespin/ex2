@@ -6,7 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
+/**
+ * this class represents the login page
+ */
 public class MyLoginPage extends JFrame implements ActionListener , MouseListener {
     JTextField textFieldForId;
     JTextField textFieldForLevel;
@@ -19,10 +21,7 @@ public class MyLoginPage extends JFrame implements ActionListener , MouseListene
     int id_num;
     int level_num;
 
-    /**
-     * this method declare how the login page look. the size of the page the labels and where they will show
-     * the size the text will show..
-     */
+
     public MyLoginPage(){
         super();
         userSuccessfullyConnected =false;
@@ -59,8 +58,9 @@ public class MyLoginPage extends JFrame implements ActionListener , MouseListene
 
 
     /**
-     * this method check if the data the user give in the Labels is legal,
-     * if so he move to the game page else in the login show the reason why the data isn't legal.
+     * this method check if the input the user entered is legal,
+     * if not the user get notified for what reaon the input is not legal
+     * if yes then the game starts with this input
      * @param e
      */
     @Override
@@ -89,12 +89,12 @@ public class MyLoginPage extends JFrame implements ActionListener , MouseListene
             if(id_str.length()!=0&&!OptionalStay)
                 this.id_num=Integer.parseInt(id_str);
             this.level_num=Integer.parseInt(level_str);
-            if(level_num<0||level_num>23){
-                message.setForeground(Color.red);
-                this.message.setText("insert level at the range of 0-23!");
-                textFieldForLevel.setText("");
-                return;
-            }
+//            if(level_num<0||level_num>23){
+//                message.setForeground(Color.red);
+//                this.message.setText("insert level at the range of 0-23!");
+//                textFieldForLevel.setText("");
+//                return;
+//            }
             if(id_str.length()!=0&&!OptionalStay)
                 this.user_entered_id=true;
             this.userSuccessfullyConnected =true;
@@ -103,7 +103,7 @@ public class MyLoginPage extends JFrame implements ActionListener , MouseListene
         }
         else {
             message.setForeground(Color.red);
-            this.message.setText("please insert valid input!");
+            this.message.setText("please insert a valid input!");
             this.textFieldForId.setText("");
             this.textFieldForLevel.setText("");
         }
@@ -114,6 +114,10 @@ public class MyLoginPage extends JFrame implements ActionListener , MouseListene
     public int getId_num(){return this.id_num; }
     public int getLevel_num(){return this.level_num;}
 
+    /**
+     * this method is responsible for removing the word "Optional" from the text field belongs to ID
+     * @param e
+     */
     @Override
     public void mouseClicked(MouseEvent e) {
     }

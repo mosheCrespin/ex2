@@ -62,7 +62,10 @@ public class CL_Agent {
 					this.setSpeed(speed);
 					this.setNextNode(dest);
 					this.setMoney(value);
-					this.dest=dest;
+					if(dest!=this.dest&&dest!=-1) {
+						System.out.println("agent: " + this._id +  " moved from: " +src + " to: " +dest);
+					}
+					this.dest = dest;
 
 				}
 			}
@@ -110,17 +113,19 @@ public class CL_Agent {
 		public boolean isMoving() {
 			return (this.dest!=-1);
 		}
+		public int getDest(){return this.dest;}
+
 
 	/**
 	 * this method call toJSON() method.
 	 * @return
 	 */
-		public String toString() {
+		public String toString1() {
 			return toJSON();
 		}
 
-		public String toString1() {
-			String ans=""+this.getID()+","+_pos+", "+isMoving()+","+this.getValue();	
+		public String toString() {
+			String ans=""+this.getID()+","+dest +", "+","+this.getValue();
 			return ans;
 		}
 		public int getID() {
